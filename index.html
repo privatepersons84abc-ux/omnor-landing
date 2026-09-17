@@ -35,9 +35,9 @@ a{color:inherit;text-decoration:none}
 /* ── колонтитул ── */
 .top{border-bottom:1px solid var(--rule);background:var(--paper)}
 .top-in{display:flex;align-items:center;gap:12px;max-width:1320px;margin:0 auto;
-        padding:15px clamp(24px,4vw,64px)}
+        padding:13px clamp(24px,4vw,64px)}
 .mark{display:flex;align-items:center;gap:1px}
-.mark .wm{font:600 33px/1 var(--sans);letter-spacing:-.03em;margin-left:-5px}
+.mark .wm{font:600 40px/1 var(--sans);letter-spacing:-.032em;margin-left:-7px}
 .top .sp{flex:1}
 .top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
 
@@ -176,7 +176,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 <div class="top">
   <div class="top-in">
     <span class="mark">
-      <svg width="58" height="58" viewBox="0 0 84 80" aria-hidden="true">
+      <svg width="72" height="72" viewBox="0 0 84 80" aria-hidden="true">
         <g transform="rotate(-48 42 40)"><circle cx="42" cy="40" r="26" fill="none"
           stroke="#D6541C" stroke-width="11" stroke-linecap="round" stroke-dasharray="142.46 20.9"/></g>
         <circle cx="42" cy="40" r="8.5" fill="#D6541C"/>
@@ -184,7 +184,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <span class="wm">mnor</span>
     </span>
     <span class="sp"></span>
-    <span class="meta">Автоматизация обработки заявок в оптовых продажах</span>
+    <span class="meta">От заявки клиента до задачи логисту</span>
   </div>
 </div>
 
@@ -287,9 +287,8 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           <span>Сопоставлено точно — в счёт. Подходит несколько позиций — формулирует
             вопрос клиенту. Такого товара у вас нет — отдаёт менеджеру.</span></div>
         <div><b>Оформляет</b>
-          <span>Счёт на оплату в вашей 1С, сделка в amoCRM или Битрикс24 со
-            спецификацией, задача логисту — подобрать транспорт под отгрузку.
-            Письмо клиенту собрано: менеджеру остаётся прочитать и отправить.</span></div>
+          <span>Счёт, сделка, задачи исполнителям и письмо клиенту — что именно
+            появляется, разобрано в следующем разделе.</span></div>
       </div>
     </div>
   </div>
@@ -298,6 +297,34 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 <div class="part">
   <div class="w">
     <div class="no">03</div>
+    <div>
+      <h2>Что появляется после разбора</h2>
+      <p class="t">Одна заявка на входе — пять готовых объектов на выходе.
+         Менеджеру остаётся прочитать и отправить.</p>
+      <div class="work">
+        <div><b>Счёт на оплату в 1С</b>
+          <span>Документ с табличной частью, контрагентом и суммой — в вашей базе,
+            не в чужом облаке. Контрагент заводится, если его ещё нет.</span></div>
+        <div><b>Сделка в CRM</b>
+          <span>amoCRM или Битрикс24: контакт, сумма, примечание с разбором
+            и списком позиций, по которым нужен ответ клиента.</span></div>
+        <div><b>Задача логисту</b>
+          <span>Подобрать транспорт под отгрузку. Вес, объём и количество паллет
+            считает код, а не модель — здесь ошибаться нельзя.</span></div>
+        <div><b>Задача закупщику</b>
+          <span>Если позиций не хватает на складе, OMNOR считает дефицит
+            и ставит задачу на закупку. Сам ничего не заказывает.</span></div>
+        <div><b>Письмо клиенту</b>
+          <span>Собрано и готово: счёт вложением и вопросы по позициям,
+            которые не удалось сопоставить однозначно.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="part">
+  <div class="w">
+    <div class="no">04</div>
     <div>
       <h2>Проверка на ваших данных</h2>
       <div class="plain">
