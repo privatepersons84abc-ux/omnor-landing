@@ -26,37 +26,37 @@ body{margin:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
 p,li,.k,.fine,.work span{text-wrap:pretty}
 a{color:inherit;text-decoration:none}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:1px}
-.w{max-width:1060px;margin:0 auto;padding:0 32px}
+.w{max-width:1320px;margin:0 auto;padding:0 clamp(24px,4vw,64px)}
 .tn{font-variant-numeric:tabular-nums}
 
-/* линованная сетка документа */
-.sheet{border-left:1px solid var(--rule);border-right:1px solid var(--rule);
-       max-width:1060px;margin:0 auto;background:#FBFBFA}
+/* лист документа во всю ширину окна */
+.sheet{background:#FBFBFA;border-top:1px solid var(--rule)}
 
 /* ── колонтитул ── */
 .top{border-bottom:1px solid var(--rule);background:var(--paper)}
-.top-in{display:flex;align-items:center;gap:12px;padding:15px 32px;max-width:1060px;margin:0 auto}
+.top-in{display:flex;align-items:center;gap:12px;max-width:1320px;margin:0 auto;
+        padding:15px clamp(24px,4vw,64px)}
 .mark{display:flex;align-items:center;gap:1px}
-.mark .wm{font:600 27px/1 var(--sans);letter-spacing:-.028em;margin-left:-4px}
+.mark .wm{font:600 33px/1 var(--sans);letter-spacing:-.03em;margin-left:-5px}
 .top .sp{flex:1}
 .top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
 
 /* ── шапка документа ── */
-.head{padding:66px 0 0}
-.head h1{font:400 clamp(34px,4.6vw,55px)/1.14 var(--serif);letter-spacing:-.018em;
-         margin:0 0 20px;max-width:21ch;text-wrap:balance}
-.head .std{font-size:18.5px;line-height:1.62;color:var(--ink-2);max-width:54ch;margin:0}
+.head{padding:88px 0 0}
+.head h1{font:400 clamp(38px,5.6vw,72px)/1.08 var(--serif);letter-spacing:-.026em;
+         margin:0 0 24px;max-width:19ch;text-wrap:balance}
+.head .std{font-size:19.5px;line-height:1.6;color:var(--ink-2);max-width:56ch;margin:0}
 
 /* ── соответствие: главный приём ── */
 .corr{margin:44px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;padding:9px 0;border-bottom:1px solid var(--rule);
            font-size:13px;color:var(--ink-3)}
 .corr .cap i{font-style:normal;flex:0 0 40%}
-.line{display:flex;align-items:baseline;gap:16px;padding:14px 0;
+.line{display:flex;align-items:baseline;gap:20px;padding:17px 0;
       border-bottom:1px solid var(--rule-2)}
-.line .raw{flex:0 0 40%;font:400 17px/1.4 var(--mono);color:var(--ink-2);
+.line .raw{flex:0 0 38%;font:400 17.5px/1.4 var(--mono);color:var(--ink-3);
            letter-spacing:-.02em}
-.line .res{flex:1;font-size:17px;line-height:1.4;opacity:0;transform:translateX(-6px);
+.line .res{flex:1;font-size:18px;line-height:1.4;opacity:0;transform:translateX(-6px);
            transition:opacity .5s var(--out),transform .5s var(--out)}
 .line.on .res{opacity:1;transform:none}
 .line .res b{font-weight:500}
@@ -67,38 +67,39 @@ a{color:inherit;text-decoration:none}
 .line.on .st{opacity:1}
 .line .st.w{color:var(--rust)}
 
-.tally{display:flex;gap:0;margin-top:26px;border:1px solid var(--ink);
-       opacity:0;transform:translateY(6px);
+.tally{display:flex;gap:0;margin-top:34px;background:var(--ink);color:#fff;
+       opacity:0;transform:translateY(8px);
        transition:opacity .6s var(--out),transform .6s var(--out)}
 .tally.on{opacity:1;transform:none}
-.tally div{flex:1;padding:18px 20px;border-right:1px solid var(--rule)}
+.tally div{flex:1;padding:30px 32px;border-right:1px solid rgba(255,255,255,.14)}
 .tally div:last-child{border-right:none}
-.tally .v{font:400 30px/1 var(--serif);letter-spacing:-.02em}
-.tally .k{font-size:13.5px;color:var(--ink-2);margin-top:7px;line-height:1.4}
-.tally .sum .v{color:var(--blue)}
+.tally .v{font:400 clamp(34px,3.6vw,50px)/1 var(--serif);letter-spacing:-.03em}
+.tally .k{font-size:14px;color:rgba(255,255,255,.62);margin-top:12px;line-height:1.45;
+          max-width:26ch}
+.tally .sum{flex:1.6}
 .tally .ask .v{color:var(--rust)}
 
 .cta-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:38px 0 66px}
-.cta{display:inline-block;background:var(--ink);color:var(--paper);
-     font:500 16px/1 var(--sans);padding:16px 26px;border-radius:2px;
+.cta{display:inline-block;background:var(--rust);color:#fff;
+     font:500 16.5px/1 var(--sans);padding:17px 30px;border-radius:2px;
      transition:background 180ms ease,transform 150ms var(--out)}
 .cta:active{transform:scale(.978)}
-@media (hover:hover) and (pointer:fine){.cta:hover{background:var(--blue)}}
+@media (hover:hover) and (pointer:fine){.cta:hover{background:#B8460F}}
 .cta-row .fine{font-size:14.5px;color:var(--ink-3);max-width:36ch;line-height:1.5}
 
 /* ── разделы документа ── */
 .part{border-top:1px solid var(--ink);padding:52px 0 58px}
-.part > .w{display:grid;grid-template-columns:78px 1fr;gap:0}
-.part .no{font:400 15px/1 var(--mono);color:var(--ink-3);padding-top:6px}
+.part > .w{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0}
+.part .no{font:400 15px/1 var(--mono);color:var(--rust);padding-top:10px}
 .part h2{font:400 clamp(25px,2.9vw,34px)/1.2 var(--serif);letter-spacing:-.016em;
          margin:0 0 18px;max-width:22ch;text-wrap:balance}
 .part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);max-width:60ch;margin:0}
 
 .work{margin:28px 0 0;border-top:1px solid var(--rule)}
-.work > div{display:grid;grid-template-columns:200px 1fr;gap:28px;padding:20px 0;
-            border-bottom:1px solid var(--rule)}
+.work > div{display:grid;grid-template-columns:240px minmax(0,1fr);gap:36px;
+            padding:22px 0;border-bottom:1px solid var(--rule);max-width:1000px}
 .work b{font-weight:600;font-size:16.5px}
-.work span{color:var(--ink-2);font-size:16px;line-height:1.6}
+.work span{color:var(--ink-2);font-size:16px;line-height:1.6;max-width:64ch}
 
 .routine{margin:26px 0 0;padding:0;list-style:none;max-width:62ch}
 .routine li{padding:13px 0 13px 0;border-bottom:1px solid var(--rule-2);
@@ -116,13 +117,29 @@ a{color:inherit;text-decoration:none}
 .plain em{font-style:normal;background:var(--rust-soft);
           box-shadow:0 -1px 0 var(--rust) inset;padding:0 2px}
 
+/* блок связи: три рабочих канала вместо одной кнопки в никуда */
+.contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+          background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16)}
+.contacts .card{display:flex;flex-direction:column;gap:7px;padding:26px 28px;
+                background:var(--ink);transition:background 180ms ease}
+.contacts .lab{font-size:13px;color:rgba(255,255,255,.5)}
+.contacts .val{font:400 clamp(20px,2vw,26px)/1.15 var(--serif);letter-spacing:-.02em;
+               color:#fff;word-break:break-word}
+.contacts .tel .val{color:var(--rust)}
+.contacts .hint{font-size:13.5px;color:rgba(255,255,255,.44);line-height:1.45}
+@media (hover:hover) and (pointer:fine){
+  .contacts .card:hover{background:#1E2026}
+}
+@media (max-width:860px){.contacts{grid-template-columns:1fr}}
+
 /* ── подвал-штамп ── */
-.stamp{scroll-margin-top:24px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
-       padding:54px 0;background:#FBFBFA}
+.stamp{scroll-margin-top:24px;padding:88px 0;background:var(--ink);color:#fff}
 .stamp h2{font:400 clamp(27px,3.2vw,38px)/1.2 var(--serif);margin:0 0 16px;
           max-width:18ch;text-wrap:balance}
-.stamp p{font-size:17.5px;line-height:1.64;color:var(--ink-2);max-width:56ch;margin:0 0 30px}
-footer{padding:26px 0 40px;font-size:14.5px;color:var(--ink-3)}
+.stamp p{font-size:18.5px;line-height:1.62;color:rgba(255,255,255,.66);
+         max-width:58ch;margin:0 0 34px}
+footer{padding:26px 0 44px;font-size:14.5px;color:var(--ink-3);
+       background:var(--paper);border-top:1px solid var(--rule)}
 .f{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline}
 .f .sp{flex:1}
 footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
@@ -159,7 +176,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 <div class="top">
   <div class="top-in">
     <span class="mark">
-      <svg width="46" height="46" viewBox="0 0 84 80" aria-hidden="true">
+      <svg width="58" height="58" viewBox="0 0 84 80" aria-hidden="true">
         <g transform="rotate(-48 42 40)"><circle cx="42" cy="40" r="26" fill="none"
           stroke="#D6541C" stroke-width="11" stroke-linecap="round" stroke-dasharray="142.46 20.9"/></g>
         <circle cx="42" cy="40" r="8.5" fill="#D6541C"/>
@@ -167,7 +184,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <span class="wm">mnor</span>
     </span>
     <span class="sp"></span>
-    <span class="meta">Операционное обслуживание B2B-сделки</span>
+    <span class="meta">Автоматизация обработки заявок в оптовых продажах</span>
   </div>
 </div>
 
@@ -214,7 +231,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     </div>
 
     <div class="cta-row">
-      <a class="cta" href="#proba">Проверить на своей заявке</a>
+      <a class="cta" href="#svyaz">Проверить на своей заявке</a>
       <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
     </div>
   </div>
@@ -298,13 +315,24 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   </div>
 </div>
 
-<div class="stamp" id="proba">
+<div class="stamp" id="svyaz">
   <div class="w">
     <h2>Проверьте на своей заявке</h2>
     <p>Одна заявка на 20–30&nbsp;позиций, обезличенная, и выгрузка прайса из 1С.
        Вернём разбор и готовый счёт — увидите на своих данных, что из этого
        работает, а что пока нет.</p>
-    <a class="cta" href="mailto:ledenev@omnor.ru?subject=Заявка%20на%20разбор">Отправить заявку</a>
+    <div class="contacts">
+      <a class="card tel" href="tel:+79602792163">
+        <span class="lab">Позвонить</span>
+        <span class="val">+7 960 279-21-63</span>
+        <span class="hint">Пётр Леденев, отвечу сам</span>
+      </a>
+      <a class="card" href="mailto:ledenev@omnor.ru?subject=Заявка%20на%20разбор">
+        <span class="lab">Почта</span>
+        <span class="val">ledenev@omnor.ru</span>
+        <span class="hint">Заявка и прайс вложением</span>
+      </a>
+    </div>
   </div>
 </div>
 
