@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OMNOR — заявка клиента становится счётом</title>
+<meta name="description" content="OMNOR разбирает многопозиционную заявку, сверяет каждую строку с вашей номенклатурой в 1С и выставляет счёт.">
+<meta property="og:title" content="OMNOR — заявка клиента становится счётом">
+<meta property="og:description" content="Excel на 37 позиций. 32 строки в счёт, 2 вопроса клиенту, 3 позиции не из вашего прайса. Четыре секунды.">
+<meta name="theme-color" content="#F3F3F1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 80'%3E%3Cg transform='rotate(-48 42 40)'%3E%3Ccircle cx='42' cy='40' r='26' fill='none' stroke='%23D6541C' stroke-width='11' stroke-linecap='round' stroke-dasharray='142.46 20.9'/%3E%3C/g%3E%3Ccircle cx='42' cy='40' r='8.5' fill='%23D6541C'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#F3F3F1; --paper-2:#EAEAE6; --ink:#17181B; --ink-2:#4A4D53; --ink-3:#7C8087;
+  --blue:#1F4E79; --blue-soft:#E7EDF4;
+  --rust:#D6541C; --rust-soft:#FBEBE2;
+  --rule:#D4D4CE; --rule-2:#E2E2DC;
+  --serif:Georgia,"Times New Roman",Times,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --out:cubic-bezier(.23,1,.32,1);
+}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent;background:var(--paper);color:var(--ink);font:16px/1.6 var(--sans);
+     -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+p,li,.k,.fine,.work span{text-wrap:pretty}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:1px}
+.w{max-width:1060px;margin:0 auto;padding:0 32px}
+.tn{font-variant-numeric:tabular-nums}
+
+/* линованная сетка документа */
+.sheet{border-left:1px solid var(--rule);border-right:1px solid var(--rule);
+       max-width:1060px;margin:0 auto;background:#FBFBFA}
+
+/* ── колонтитул ── */
+.top{border-bottom:1px solid var(--rule);background:var(--paper)}
+.top-in{display:flex;align-items:center;gap:12px;padding:15px 32px;max-width:1060px;margin:0 auto}
+.mark{display:flex;align-items:center;gap:1px}
+.mark .wm{font:600 27px/1 var(--sans);letter-spacing:-.028em;margin-left:-4px}
+.top .sp{flex:1}
+.top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
+
+/* ── шапка документа ── */
+.head{padding:66px 0 0}
+.head h1{font:400 clamp(34px,4.6vw,55px)/1.14 var(--serif);letter-spacing:-.018em;
+         margin:0 0 20px;max-width:21ch;text-wrap:balance}
+.head .std{font-size:18.5px;line-height:1.62;color:var(--ink-2);max-width:54ch;margin:0}
+
+/* ── соответствие: главный приём ── */
+.corr{margin:44px 0 0;border-top:1px solid var(--ink)}
+.corr .cap{display:flex;padding:9px 0;border-bottom:1px solid var(--rule);
+           font-size:13px;color:var(--ink-3)}
+.corr .cap i{font-style:normal;flex:0 0 40%}
+.line{display:flex;align-items:baseline;gap:16px;padding:14px 0;
+      border-bottom:1px solid var(--rule-2)}
+.line .raw{flex:0 0 40%;font:400 17px/1.4 var(--mono);color:var(--ink-2);
+           letter-spacing:-.02em}
+.line .res{flex:1;font-size:17px;line-height:1.4;opacity:0;transform:translateX(-6px);
+           transition:opacity .5s var(--out),transform .5s var(--out)}
+.line.on .res{opacity:1;transform:none}
+.line .res b{font-weight:500}
+.line .res .q{color:var(--rust)}
+.line .res .x{color:var(--ink-3)}
+.line .st{flex:0 0 96px;text-align:right;font-size:13px;color:var(--ink-3);
+          opacity:0;transition:opacity .5s var(--out) .12s}
+.line.on .st{opacity:1}
+.line .st.w{color:var(--rust)}
+
+.tally{display:flex;gap:0;margin-top:26px;border:1px solid var(--ink);
+       opacity:0;transform:translateY(6px);
+       transition:opacity .6s var(--out),transform .6s var(--out)}
+.tally.on{opacity:1;transform:none}
+.tally div{flex:1;padding:18px 20px;border-right:1px solid var(--rule)}
+.tally div:last-child{border-right:none}
+.tally .v{font:400 30px/1 var(--serif);letter-spacing:-.02em}
+.tally .k{font-size:13.5px;color:var(--ink-2);margin-top:7px;line-height:1.4}
+.tally .sum .v{color:var(--blue)}
+.tally .ask .v{color:var(--rust)}
+
+.cta-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin:38px 0 66px}
+.cta{display:inline-block;background:var(--ink);color:var(--paper);
+     font:500 16px/1 var(--sans);padding:16px 26px;border-radius:2px;
+     transition:background 180ms ease,transform 150ms var(--out)}
+.cta:active{transform:scale(.978)}
+@media (hover:hover) and (pointer:fine){.cta:hover{background:var(--blue)}}
+.cta-row .fine{font-size:14.5px;color:var(--ink-3);max-width:36ch;line-height:1.5}
+
+/* ── разделы документа ── */
+.part{border-top:1px solid var(--ink);padding:52px 0 58px}
+.part > .w{display:grid;grid-template-columns:78px 1fr;gap:0}
+.part .no{font:400 15px/1 var(--mono);color:var(--ink-3);padding-top:6px}
+.part h2{font:400 clamp(25px,2.9vw,34px)/1.2 var(--serif);letter-spacing:-.016em;
+         margin:0 0 18px;max-width:22ch;text-wrap:balance}
+.part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);max-width:60ch;margin:0}
+
+.work{margin:28px 0 0;border-top:1px solid var(--rule)}
+.work > div{display:grid;grid-template-columns:200px 1fr;gap:28px;padding:20px 0;
+            border-bottom:1px solid var(--rule)}
+.work b{font-weight:600;font-size:16.5px}
+.work span{color:var(--ink-2);font-size:16px;line-height:1.6}
+
+.routine{margin:26px 0 0;padding:0;list-style:none;max-width:62ch}
+.routine li{padding:13px 0 13px 0;border-bottom:1px solid var(--rule-2);
+            color:var(--ink-2);font-size:16.5px;line-height:1.55}
+.routine li:first-child{border-top:1px solid var(--rule-2)}
+.routine li b{color:var(--ink);font-weight:600}
+
+.note{margin-top:26px;padding:20px 24px;background:var(--blue-soft);
+      border-left:2px solid var(--blue);max-width:62ch}
+.note p{margin:0;font-size:16px;line-height:1.62;color:var(--ink-2)}
+
+.plain{max-width:62ch}
+.plain p{font-size:17px;line-height:1.7;color:var(--ink-2);margin:0 0 15px}
+.plain p:last-child{margin:0}
+.plain em{font-style:normal;background:var(--rust-soft);
+          box-shadow:0 -1px 0 var(--rust) inset;padding:0 2px}
+
+/* ── подвал-штамп ── */
+.stamp{scroll-margin-top:24px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);
+       padding:54px 0;background:#FBFBFA}
+.stamp h2{font:400 clamp(27px,3.2vw,38px)/1.2 var(--serif);margin:0 0 16px;
+          max-width:18ch;text-wrap:balance}
+.stamp p{font-size:17.5px;line-height:1.64;color:var(--ink-2);max-width:56ch;margin:0 0 30px}
+footer{padding:26px 0 40px;font-size:14.5px;color:var(--ink-3)}
+.f{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline}
+.f .sp{flex:1}
+footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
+         transition:border-color 180ms ease}
+@media (hover:hover) and (pointer:fine){footer a:hover{border-bottom-color:var(--ink)}}
+
+@media (prefers-reduced-motion:reduce){
+  .line .res,.line .st,.tally{transition:opacity 260ms ease}
+  .line .res{transform:none}
+  .tally{transform:none}
+  .cta:active{transform:none}
+}
+@media (max-width:860px){
+  .w{padding:0 20px}
+  .top-in{padding:13px 20px}
+  .head{padding:40px 0 0}
+  .corr .cap{display:none}
+  .top .meta{display:none}
+  /* на узком экране строка заявки читается сверху вниз:
+     что прислали + сколько, под ней — что это оказалось */
+  .line{display:grid;grid-template-columns:1fr auto;gap:5px 12px;padding:15px 0}
+  .line .raw{grid-column:1;font-size:15.5px}
+  .line .st{grid-column:2;grid-row:1;text-align:right}
+  .line .res{grid-column:1 / -1;font-size:16px}
+  .tally{flex-wrap:wrap}
+  .tally div{flex:1 0 100%;border-right:none;border-bottom:1px solid var(--rule)}
+  .tally div:last-child{border-bottom:none}
+  .part > .w{grid-template-columns:1fr}
+  .part .no{padding:0 0 10px}
+  .work > div{grid-template-columns:1fr;gap:5px}
+}
+</style>
+
+<div class="top">
+  <div class="top-in">
+    <span class="mark">
+      <svg width="46" height="46" viewBox="0 0 84 80" aria-hidden="true">
+        <g transform="rotate(-48 42 40)"><circle cx="42" cy="40" r="26" fill="none"
+          stroke="#D6541C" stroke-width="11" stroke-linecap="round" stroke-dasharray="142.46 20.9"/></g>
+        <circle cx="42" cy="40" r="8.5" fill="#D6541C"/>
+      </svg>
+      <span class="wm">mnor</span>
+    </span>
+    <span class="sp"></span>
+    <span class="meta">Операционное обслуживание B2B-сделки</span>
+  </div>
+</div>
+
+<div class="sheet">
+
+<div class="head">
+  <div class="w">
+    <h1>Клиент присылает список. Вы отправляете счёт.</h1>
+    <p class="std">Между этими двумя событиями менеджер тратит полдня. OMNOR проходит
+       его сам: читает заявку, сверяет каждую строку с вашей номенклатурой,
+       выставляет счёт в 1С, заводит сделку в CRM и ставит задачу логисту.</p>
+
+    <div class="corr" id="corr">
+      <div class="cap"><i>Как написал снабженец</i><i>Что это в вашей номенклатуре</i></div>
+
+      <div class="line"><span class="raw">Болт М10х80 ДИН933 оц.</span>
+        <span class="res"><b>Болт М10x80 DIN 933 оцинкованный</b></span>
+        <span class="st">200&nbsp;шт</span></div>
+
+      <div class="line"><span class="raw">ввгнг(а)-ls 5*6</span>
+        <span class="res"><b>Кабель ВВГнг(А)-LS 5x6 ГОСТ</b></span>
+        <span class="st">250&nbsp;м</span></div>
+
+      <div class="line"><span class="raw">кран шар. dn32</span>
+        <span class="res"><b>Кран шаровой DN32 ВР/НР латунь PN16</b></span>
+        <span class="st">18&nbsp;шт</span></div>
+
+      <div class="line"><span class="raw">Болт М10 оц.</span>
+        <span class="res"><span class="q">Не указана длина: 40, 60, 80, 100 или 120 мм?</span></span>
+        <span class="st w">вопрос</span></div>
+
+      <div class="line"><span class="raw">Лоток лестничный 200х80</span>
+        <span class="res"><span class="x">В вашем прайсе лотков нет</span></span>
+        <span class="st">—</span></div>
+
+      <div class="tally" id="tally">
+        <div class="sum"><div class="v tn">473&nbsp;473,70&nbsp;₽</div>
+          <div class="k">32 позиции сопоставлены и ушли в счёт</div></div>
+        <div class="ask"><div class="v tn">2</div>
+          <div class="k">строки, где OMNOR задал вопрос клиенту</div></div>
+        <div><div class="v tn">3</div>
+          <div class="k">позиции, которых нет в вашем прайсе</div></div>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta" href="#proba">Проверить на своей заявке</a>
+      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
+    </div>
+  </div>
+</div>
+
+<div class="part">
+  <div class="w">
+    <div class="no">01</div>
+    <div>
+      <h2>Заявку получили не только вы</h2>
+      <p class="t">Снабженец рассылает одну и ту же заявку сразу нескольким
+         поставщикам. Пока ваш менеджер разбирает файл и ищет позиции в базе,
+         кто-то уже прислал счёт — и дальше обсуждают его. Цена начинает играть
+         роль только после того, как счёт увидели.</p>
+      <ul class="routine">
+        <li><b>Переносит позиции</b> из присланного файла в 1С — строка за строкой</li>
+        <li><b>Сверяет каждую строку с номенклатурой:</b> в письме «ввгнг 5*6»,
+            в базе «Кабель ВВГнг(А)-LS 5x6 ГОСТ». Соответствие менеджер держит в голове
+            или ищет перебором</li>
+        <li><b>Проверяет</b> остаток, цену и условия конкретного клиента</li>
+        <li><b>Оформляет</b> счёт, заводит сделку в CRM, ставит задачу логисту</li>
+      </ul>
+      <div class="note">
+        <p>«Пришлите список необходимых материалов — подготовим расчёт в течение
+           одного рабочего дня». Так пишут на сайтах оптовых поставщиков.
+           Для клиента, который ждёт счёт, рабочий день — это долго.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="part">
+  <div class="w">
+    <div class="no">02</div>
+    <div>
+      <h2>Как работает OMNOR</h2>
+      <p class="t">Сначала мы загружаем вашу номенклатуру из 1С — артикулы,
+         единицы измерения, виды цен и остатки. Дальше OMNOR работает только
+         по ней и ничего не придумывает.</p>
+      <div class="work">
+        <div><b>Читает заявку</b>
+          <span>Excel, CSV, PDF или текст письма. Находит таблицу сам, даже если
+            сверху шапка с адресом объекта, а снизу итоги.</span></div>
+        <div><b>Приводит строки к одному виду</b>
+          <span>«ДУ25», «dn 25» и «д25» — одно и то же. Русская «х» и звёздочка
+            между размерами, «оц.» и «оцинкованный», запятая вместо точки в 4,2 —
+            всё это разбирается до поиска по прайсу.</span></div>
+        <div><b>Сопоставляет с вашим прайсом</b>
+          <span>Для каждой строки ищет совпадения в вашей базе — по артикулу,
+            названию и размерам — и выбирает одно. Предложить то, чего у вас нет,
+            он не может.</span></div>
+        <div><b>Разделяет на три стопки</b>
+          <span>Сопоставлено точно — в счёт. Подходит несколько позиций — формулирует
+            вопрос клиенту. Такого товара у вас нет — отдаёт менеджеру.</span></div>
+        <div><b>Оформляет</b>
+          <span>Счёт на оплату в вашей 1С, сделка в amoCRM или Битрикс24 со
+            спецификацией, задача логисту — подобрать транспорт под отгрузку.
+            Письмо клиенту собрано: менеджеру остаётся прочитать и отправить.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="part">
+  <div class="w">
+    <div class="no">03</div>
+    <div>
+      <h2>Проверка на ваших данных</h2>
+      <div class="plain">
+        <p>Прежде чем что-то обсуждать, мы показываем результат. Пришлите одну
+           обезличенную заявку и выгрузку прайса — вернём разбор: какие позиции
+           сопоставились, по каким OMNOR задал вопрос, чего в прайсе не нашлось.</p>
+        <p>Это бесплатно и ни к чему не обязывает. По одному такому разбору
+           <em>видно больше, чем по любой презентации</em>.</p>
+        <p>Где работает: по умолчанию подключаемся к вашей 1С и CRM, ставить ничего
+           не нужно. Если по требованиям безопасности данные не должны покидать
+           компанию, OMNOR разворачивается на вашем оборудовании — нужен отдельный
+           сервер, например NVIDIA DGX Spark.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stamp" id="proba">
+  <div class="w">
+    <h2>Проверьте на своей заявке</h2>
+    <p>Одна заявка на 20–30&nbsp;позиций, обезличенная, и выгрузка прайса из 1С.
+       Вернём разбор и готовый счёт — увидите на своих данных, что из этого
+       работает, а что пока нет.</p>
+    <a class="cta" href="mailto:ledenev@omnor.ru?subject=Заявка%20на%20разбор">Отправить заявку</a>
+  </div>
+</div>
+
+<footer>
+  <div class="w f">
+    <span>OMNOR</span>
+    <span class="sp"></span>
+    <a href="mailto:ledenev@omnor.ru">ledenev@omnor.ru</a>
+    <a href="tel:+79602792163">+7 960 279-21-63</a>
+  </div>
+</footer>
+
+</div>
+
+<script>
+// Один срежиссированный момент на загрузке: строки заявки разрешаются
+// в номенклатуру сверху вниз. Дальше по странице движения нет.
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lines = [...document.querySelectorAll('.line')];
+  const tally = document.getElementById('tally');
+  if (reduce) {
+    lines.forEach(l => l.classList.add('on'));
+    tally.classList.add('on');
+    return;
+  }
+  lines.forEach((l, i) => setTimeout(() => l.classList.add('on'), 340 + i * 130));
+  setTimeout(() => tally.classList.add('on'), 340 + lines.length * 130 + 120);
+})();
+</script>
+</html>
