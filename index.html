@@ -93,29 +93,30 @@ a{color:inherit;text-decoration:none}
 
 /* ── разделы документа ── */
 .part{border-top:1px solid var(--ink);padding:52px 0 58px}
-.part > .w{display:grid;grid-template-columns:96px minmax(0,1fr);gap:0}
-.part .no{font:400 15px/1 var(--mono);color:var(--rust);padding-top:10px}
+.part > .w{max-width:980px;display:grid;grid-template-columns:60px minmax(0,1fr);
+           gap:0 28px}
+.part .no{font:400 14px/1 var(--mono);color:var(--rust);padding-top:11px}
 .part h2{font:400 clamp(25px,2.9vw,34px)/1.2 var(--serif);letter-spacing:-.016em;
-         margin:0 0 18px;max-width:22ch;text-wrap:balance}
-.part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);max-width:60ch;margin:0}
+         margin:0 0 18px;max-width:24ch;text-wrap:balance}
+.part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);margin:0}
 
 .work{margin:28px 0 0;border-top:1px solid var(--rule)}
-.work > div{display:grid;grid-template-columns:240px minmax(0,1fr);gap:36px;
-            padding:22px 0;border-bottom:1px solid var(--rule);max-width:1000px}
+.work > div{display:grid;grid-template-columns:210px minmax(0,1fr);gap:30px;
+            padding:22px 0;border-bottom:1px solid var(--rule)}
 .work b{font-weight:600;font-size:16.5px}
-.work span{color:var(--ink-2);font-size:16px;line-height:1.6;max-width:64ch}
+.work span{color:var(--ink-2);font-size:16px;line-height:1.6}
 
-.routine{margin:26px 0 0;padding:0;list-style:none;max-width:62ch}
+.routine{margin:26px 0 0;padding:0;list-style:none}
 .routine li{padding:13px 0 13px 0;border-bottom:1px solid var(--rule-2);
             color:var(--ink-2);font-size:16.5px;line-height:1.55}
 .routine li:first-child{border-top:1px solid var(--rule-2)}
 .routine li b{color:var(--ink);font-weight:600}
 
 .note{margin-top:26px;padding:20px 24px;background:var(--blue-soft);
-      border-left:2px solid var(--blue);max-width:62ch}
+      border-left:2px solid var(--blue)}
 .note p{margin:0;font-size:16px;line-height:1.62;color:var(--ink-2)}
 
-.plain{max-width:62ch}
+.plain{max-width:none}
 .plain p{font-size:17px;line-height:1.7;color:var(--ink-2);margin:0 0 15px}
 .plain p:last-child{margin:0}
 .plain em{font-style:normal;background:var(--rust-soft);
@@ -138,6 +139,7 @@ a{color:inherit;text-decoration:none}
 
 /* ── подвал-штамп ── */
 .stamp{scroll-margin-top:24px;padding:88px 0;background:var(--ink);color:#fff}
+.stamp > .w{max-width:980px}
 .stamp h2{font:400 clamp(27px,3.2vw,38px)/1.2 var(--serif);margin:0 0 16px;
           max-width:18ch;text-wrap:balance}
 .stamp p{font-size:18.5px;line-height:1.62;color:rgba(255,255,255,.66);
