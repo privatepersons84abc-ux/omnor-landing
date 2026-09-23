@@ -33,13 +33,35 @@ a{color:inherit;text-decoration:none}
 .sheet{background:#FBFBFA;border-top:1px solid var(--rule)}
 
 /* ── колонтитул ── */
-.top{border-bottom:1px solid var(--rule);background:var(--paper)}
-.top-in{display:flex;align-items:center;gap:12px;max-width:1320px;margin:0 auto;
-        padding:13px clamp(24px,4vw,64px)}
+/* липкий: страница длинная, и кнопка нужна в тот момент, когда человек
+   дочитал и созрел, а не только на первом экране */
+.top{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--rule);
+     background:rgba(243,243,241,.93);
+     -webkit-backdrop-filter:saturate(180%) blur(10px);
+     backdrop-filter:saturate(180%) blur(10px)}
+.top-in{display:flex;align-items:center;gap:14px;max-width:1320px;margin:0 auto;
+        padding:8px clamp(24px,4vw,64px)}
 .mark{display:flex;align-items:center;gap:1px}
-.mark .wm{font:600 40px/1 var(--sans);letter-spacing:-.032em;margin-left:-7px}
+.mark svg{width:54px;height:54px}
+.mark .wm{font:600 40px/1 var(--sans);letter-spacing:-.032em;margin-left:-7px;
+          font-size:30px}
 .top .sp{flex:1}
 .top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
+.cta-top{flex:none;background:var(--rust);color:#fff;border:0;cursor:pointer;
+         font:500 14.5px/1 var(--sans);padding:12px 20px;border-radius:2px;
+         transition:background 180ms ease,transform 150ms var(--out)}
+.cta-top:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.cta-top:hover{background:#B8460F}}
+/* рядом с кнопкой подпись не помещается — на узком экране прячем её:
+   то же самое написано крупно на первом экране */
+@media (max-width:900px){.top .meta{display:none}}
+/* липкая шапка на телефоне съедает высоту экрана — ужимаем */
+@media (max-width:560px){
+  .top-in{padding:7px 20px;gap:10px}
+  .mark svg{width:44px;height:44px}
+  .mark .wm{font-size:25px;margin-left:-5px}
+  .cta-top{font-size:14px;padding:11px 15px}
+}
 
 /* ── шапка документа ── */
 .head{padding:64px 0 0}
@@ -123,23 +145,31 @@ a{color:inherit;text-decoration:none}
           box-shadow:0 -1px 0 var(--rust) inset;padding:0 2px}
 
 /* блок связи: три рабочих канала вместо одной кнопки в никуда */
-.contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
+.contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
           background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16)}
 .contacts .card{display:flex;flex-direction:column;gap:7px;padding:26px 28px;
                 background:var(--ink);transition:background 180ms ease}
 .contacts .lab{font-size:13px;color:rgba(255,255,255,.5)}
 .contacts .val{font:400 clamp(20px,2vw,26px)/1.15 var(--serif);letter-spacing:-.02em;
                color:#fff;word-break:break-word}
-.contacts .tel .val{color:var(--rust)}
+/* телефон был рыжим как акцент — теперь рыжая карточка заявки,
+   и два акцента спорили бы друг с другом */
+.contacts .tel .val{color:#fff}
 .contacts .hint{font-size:13.5px;color:rgba(255,255,255,.44);line-height:1.45}
 @media (hover:hover) and (pointer:fine){
   .contacts .card:hover{background:#1E2026}
 }
 @media (max-width:860px){.contacts{grid-template-columns:1fr}}
-
-/* кнопка в блоке связи */
-.stamp .cta-row{margin:0 0 28px}
-.stamp .cta-row .fine{color:rgba(255,255,255,.5)}
+/* главный путь — цветом, а не размером: звонок и почта остаются рядом
+   как равные по форме, но явно запасные */
+.contacts .act{background:var(--rust);border:0;cursor:pointer;text-align:left;
+               font-family:var(--sans)}
+.contacts .act .lab{color:rgba(255,255,255,.66)}
+.contacts .act .val{color:#fff}
+.contacts .act .hint{color:rgba(255,255,255,.72)}
+@media (hover:hover) and (pointer:fine){
+  .contacts .act:hover{background:#B8460F}
+}
 
 /* ── окно с формой ── */
 dialog.modal{border:0;padding:0;color:var(--ink);background:var(--paper);
@@ -259,6 +289,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     </span>
     <span class="sp"></span>
     <span class="meta">Автоматизация продаж для оптовых поставщиков и дистрибьюторов</span>
+    <button type="button" class="cta-top" data-form>Оставить заявку</button>
   </div>
 </div>
 
@@ -427,11 +458,12 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     <p>Одна заявка на 20–30&nbsp;позиций, обезличенная, и выгрузка прайса из 1С.
        Вернём разбор и готовый счёт — увидите на своих данных, что из этого
        работает, а что пока нет.</p>
-    <div class="cta-row">
-      <button type="button" class="cta" data-form>Оставить заявку</button>
-      <span class="fine">Оставьте контакты — свяжусь сам и заберу заявку</span>
-    </div>
     <div class="contacts">
+      <button type="button" class="card act" data-form>
+        <span class="lab">Заявка</span>
+        <span class="val">Получить разбор</span>
+        <span class="hint">Оставьте контакты — свяжусь сам</span>
+      </button>
       <a class="card tel" href="tel:+79602792163">
         <span class="lab">Позвонить</span>
         <span class="val">+7 960 279-21-63</span>
@@ -588,10 +620,10 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           'Страница': location.href
         })
       });
-      // одной проверки r.ok мало: пока обработчик не поднят, сервер отдаёт
-      // на этот адрес саму страницу с кодом 200 — и успех был бы ложным
-      const ct = r.headers.get('content-type') || '';
-      if (!r.ok || !ct.includes('application/json')) throw new Error(r.status);
+      // одной проверки r.ok мало: приёмник отвечает 200 и на отказ.
+      // Тип ответа не проверяем — он приходит как text/html, хотя внутри
+      // JSON. Разбор сам упадёт, если вместо ответа прилетит страница.
+      if (!r.ok) throw new Error(r.status);
       const out = await r.json();
       // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
       const good = out && (out.ok === true || String(out.success) === 'true');
