@@ -520,7 +520,9 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 
 // Окно с формой заявки.
 (function () {
-  const ENDPOINT = '/api/zayavka';
+  // Приёмник заявок. Пересылает письмом на ledenev@omnor.ru.
+  // Когда поднимем свой обработчик — здесь меняется одна строка на '/api/zayavka'.
+  const ENDPOINT = 'https://formsubmit.co/ajax/ledenev@omnor.ru';
 
   const dlg  = document.getElementById('zayavka');
   const form = dlg.querySelector('.zf');
@@ -577,10 +579,13 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:    form.name_.value.trim(),
-          phone:   form.phone.value.trim(),
-          company: form.company.value.trim(),
-          page:    location.href
+          _subject: 'Заявка с сайта — ' + form.name_.value.trim(),
+          _template: 'table',
+          _captcha: 'false',
+          'Имя':      form.name_.value.trim(),
+          'Телефон':  form.phone.value.trim(),
+          'Компания': form.company.value.trim() || '—',
+          'Страница': location.href
         })
       });
       // одной проверки r.ok мало: пока обработчик не поднят, сервер отдаёт
@@ -588,7 +593,9 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       const ct = r.headers.get('content-type') || '';
       if (!r.ok || !ct.includes('application/json')) throw new Error(r.status);
       const out = await r.json();
-      if (!out || out.ok !== true) throw new Error('not ok');
+      // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
+      const good = out && (out.ok === true || String(out.success) === 'true');
+      if (!good) throw new Error('not ok');
       dlg.classList.add('sent');
     } catch (err) {
       msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
