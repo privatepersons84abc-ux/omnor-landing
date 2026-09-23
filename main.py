@@ -16,6 +16,7 @@ from email.utils import formatdate
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 
 ROOT = Path(__file__).parent
@@ -35,6 +36,15 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger("omnor")
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+# обработчик может жить на отдельном поддомене — тогда браузер шлёт
+# запрос на чужой origin и без этого заголовка его не пропустит
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://omnor.ru", "https://www.omnor.ru"],
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
+)
 
 _hits: dict[str, list[float]] = {}
 
