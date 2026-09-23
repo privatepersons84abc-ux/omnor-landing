@@ -145,7 +145,8 @@ a{color:inherit;text-decoration:none}
           box-shadow:0 -1px 0 var(--rust) inset;padding:0 2px}
 
 /* блок связи: три рабочих канала вместо одной кнопки в никуда */
-.contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+/* главная карточка во всю ширину, под ней запасные пути в ряд */
+.contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
           background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16)}
 .contacts .card{display:flex;flex-direction:column;gap:7px;padding:26px 28px;
                 background:var(--ink);transition:background 180ms ease}
@@ -162,8 +163,8 @@ a{color:inherit;text-decoration:none}
 @media (max-width:860px){.contacts{grid-template-columns:1fr}}
 /* главный путь — цветом, а не размером: звонок и почта остаются рядом
    как равные по форме, но явно запасные */
-.contacts .act{background:var(--rust);border:0;cursor:pointer;text-align:left;
-               font-family:var(--sans)}
+.contacts .act{grid-column:1 / -1;background:var(--rust);border:0;cursor:pointer;
+               text-align:left;font-family:var(--sans)}
 .contacts .act .lab{color:rgba(255,255,255,.66)}
 .contacts .act .val{color:#fff}
 .contacts .act .hint{color:rgba(255,255,255,.72)}
@@ -201,10 +202,17 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 .zf input:focus{outline:2px solid var(--blue);outline-offset:-2px;
                 border-color:var(--blue)}
 .zf input[aria-invalid="true"]{border-color:var(--rust)}
-.zf .pick{display:flex;align-items:center;gap:9px;cursor:pointer;
-          font-size:14.5px;color:var(--ink-2);margin-top:-4px}
-.zf .pick input{width:17px;height:17px;flex:none;accent-color:var(--rust);
-                padding:0;margin:0;cursor:pointer}
+.zf .seg{display:flex;border:1px solid var(--rule);border-radius:2px;
+         overflow:hidden;background:#fff}
+.zf .seg button{flex:1;background:transparent;border:0;cursor:pointer;
+                padding:11px 6px;font:400 15px/1 var(--sans);color:var(--ink-2);
+                border-right:1px solid var(--rule);
+                transition:background 140ms ease,color 140ms ease}
+.zf .seg button:last-child{border-right:0}
+.zf .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+@media (hover:hover) and (pointer:fine){
+  .zf .seg button:not([aria-pressed="true"]):hover{background:var(--paper-2)}
+}
 .zf .msg{margin:0;font-size:13.5px;line-height:1.45;color:var(--rust)}
 .zf .msg:empty{display:none}
 /* ловушка для ботов: людям не видна, заполняют только роботы */
@@ -470,17 +478,17 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <button type="button" class="card act" data-form>
         <span class="lab">Заявка</span>
         <span class="val">Получить разбор</span>
-        <span class="hint">Оставьте телефон — перезвоню</span>
+        <span class="hint">Позвоню или напишу — как удобнее</span>
       </button>
       <a class="card tel" href="tel:+79602792163">
         <span class="lab">Позвонить</span>
         <span class="val">+7 960 279-21-63</span>
         <span class="hint">Пётр Леденев</span>
       </a>
-      <a class="card" href="mailto:ledenev@omnor.ru?subject=Заявка%20на%20разбор">
-        <span class="lab">Почта</span>
-        <span class="val">ledenev@omnor.ru</span>
-        <span class="hint">Заявка и прайс вложением</span>
+      <a class="card" href="https://t.me/north_glow" target="_blank" rel="noopener">
+        <span class="lab">Telegram</span>
+        <span class="val">@north_glow</span>
+        <span class="hint">Можно сразу с файлом заявки</span>
       </a>
     </div>
   </div>
@@ -499,7 +507,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   <div class="modal-head">
     <div>
       <h3 id="zayavka-t">Проверим на вашей заявке</h3>
-      <p class="sub">Оставьте телефон — позвоню, заберу заявку и прайс,
+      <p class="sub">Оставьте контакт, как вам удобнее. Заберу заявку и прайс,
          верну разбор и готовый счёт.</p>
     </div>
     <button type="button" class="modal-x" aria-label="Закрыть">&#215;</button>
@@ -512,14 +520,18 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
                placeholder="Имя" required>
       </div>
       <div class="row">
-        <label for="z-tel">Телефон <span class="req">*</span></label>
+        <label>Как с вами связаться <span class="req">*</span></label>
+        <div class="seg" role="group">
+          <button type="button" data-ch="Телефон" aria-pressed="true">Телефон</button>
+          <button type="button" data-ch="Telegram" aria-pressed="false">Telegram</button>
+          <button type="button" data-ch="MAX" aria-pressed="false">MAX</button>
+        </div>
+      </div>
+      <div class="row">
+        <label for="z-tel" id="z-tel-lab">Телефон <span class="req">*</span></label>
         <input id="z-tel" name="phone" type="tel" inputmode="tel"
                autocomplete="tel" placeholder="+7 900 000-00-00" required>
       </div>
-      <label class="pick" for="z-msg">
-        <input id="z-msg" name="write" type="checkbox">
-        Лучше напишите в мессенджер, чем звонить
-      </label>
       <div class="row">
         <label for="z-co">Компания и сайт</label>
         <input id="z-co" name="company" type="text" autocomplete="organization"
@@ -532,7 +544,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <p class="msg" role="alert"></p>
       <div class="foot">
         <button type="submit" class="cta">Отправить</button>
-        <span class="hint">Позвоню лично. Рассылок не будет.</span>
+        <span class="hint">Свяжусь лично. Рассылок не будет.</span>
       </div>
     </form>
     <div class="zdone">
@@ -540,7 +552,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <p class="zcall">Позвоню сегодня. Не хотите ждать — наберите сами:
          <nobr>+7 960 279-21-63</nobr>.</p>
       <p class="zwrite">Напишу сегодня. Не хотите ждать — пишите сами:
-         <nobr>+7 960 279-21-63</nobr>.</p>
+         <nobr>@north_glow</nobr> или <nobr>+7 960 279-21-63</nobr>.</p>
       <button type="button" class="cta" data-close>Закрыть</button>
     </div>
   </div>
@@ -575,6 +587,29 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   const msg  = form.querySelector('.msg');
   const send = form.querySelector('button[type=submit]');
 
+  // выбранный канал: от него зависят подпись поля, проверка и обещание
+  // на экране «Принято»
+  const CH = {
+    'Телефон':  { lab: 'Телефон',          ph: '+7 900 000-00-00', mode: 'tel'  },
+    'Telegram': { lab: 'Ник или телефон',  ph: '@nickname',        mode: 'text' },
+    'MAX':      { lab: 'Телефон в MAX',    ph: '+7 900 000-00-00', mode: 'tel'  }
+  };
+  let channel = 'Телефон';
+  const chLab = form.querySelector('#z-tel-lab');
+  const chInp = form.phone;
+
+  form.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    channel = b.dataset.ch;
+    form.querySelectorAll('.seg button').forEach(x =>
+      x.setAttribute('aria-pressed', String(x === b)));
+    const c = CH[channel];
+    chLab.innerHTML = c.lab + ' <span class="req">*</span>';
+    chInp.placeholder = c.ph;
+    chInp.inputMode = c.mode;
+    chInp.removeAttribute('aria-invalid');
+    msg.textContent = '';
+  }));
+
   function open() {
     dlg.classList.remove('sent', 'write');
     dlg.showModal();
@@ -603,11 +638,16 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     [...form.elements].forEach(el => el.removeAttribute('aria-invalid'));
     msg.textContent = '';
     const name = form.name_.value.trim();
-    const tel  = form.phone.value.trim();
+    const val  = form.phone.value.trim();
     if (name.length < 2) return fail(form.name_, 'Напишите, как к вам обращаться.');
-    // цифр меньше десяти — это не телефон, по такому не перезвонить
-    if ((tel.match(/\d/g) || []).length < 10)
+    const digits = (val.match(/\d/g) || []).length;
+    // в Telegram годится и ник, и номер; в MAX и по телефону — только номер
+    if (channel === 'Telegram') {
+      if (!(/^@?[a-zA-Z0-9_]{4,}$/.test(val) || digits >= 10))
+        return fail(form.phone, 'Нужен ник вида @nickname или номер телефона.');
+    } else if (digits < 10) {
       return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
+    }
     return true;
   }
 
@@ -625,13 +665,14 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          _subject: 'Заявка с сайта — ' + form.name_.value.trim(),
+          _subject: 'Заявка с сайта — ' + form.name_.value.trim()
+                    + ' (' + channel + ')',
           _template: 'table',
           _captcha: 'false',
           'Имя':      form.name_.value.trim(),
-          'Телефон':  form.phone.value.trim(),
+          'Канал':    channel,
+          'Контакт':  form.phone.value.trim(),
           'Компания': form.company.value.trim() || '—',
-          'Связь':    form.write.checked ? 'ПИСАТЬ в мессенджер' : 'можно звонить',
           'Страница': location.href
         })
       });
@@ -643,7 +684,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
       const good = out && (out.ok === true || String(out.success) === 'true');
       if (!good) throw new Error('not ok');
-      if (form.write.checked) dlg.classList.add('write');
+      if (channel !== 'Телефон') dlg.classList.add('write');
       dlg.classList.add('sent');
     } catch (err) {
       msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
