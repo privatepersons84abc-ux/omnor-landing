@@ -149,6 +149,14 @@ a{color:inherit;text-decoration:none}
 /* высоту дальше выставляет скрипт Яндекса по фактическому содержимому */
 .sheet-form iframe{display:block;width:100%;border:0;height:470px}
 @media (max-width:860px){.reach{grid-template-columns:1fr}}
+/* Яндекс отдаёт форму по системной теме, и из родителя это не переопределить:
+   внутри кросс-доменного айфрейма prefers-color-scheme слушает ОС. Поэтому при
+   тёмной теме темнеет и бланк — иначе белый текст формы ложится на белое. */
+@media (prefers-color-scheme:dark){
+  .sheet-form{background:#212329;border-color:rgba(255,255,255,.3)}
+  .sheet-form .cap{color:rgba(255,255,255,.6);
+                   border-bottom-color:rgba(255,255,255,.16)}
+}
 
 /* ── подвал-штамп ── */
 .stamp{scroll-margin-top:24px;padding:88px 0;background:var(--ink);color:#fff}
