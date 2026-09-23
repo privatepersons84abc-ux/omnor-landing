@@ -201,6 +201,10 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 .zf input:focus{outline:2px solid var(--blue);outline-offset:-2px;
                 border-color:var(--blue)}
 .zf input[aria-invalid="true"]{border-color:var(--rust)}
+.zf .pick{display:flex;align-items:center;gap:9px;cursor:pointer;
+          font-size:14.5px;color:var(--ink-2);margin-top:-4px}
+.zf .pick input{width:17px;height:17px;flex:none;accent-color:var(--rust);
+                padding:0;margin:0;cursor:pointer}
 .zf .msg{margin:0;font-size:13.5px;line-height:1.45;color:var(--rust)}
 .zf .msg:empty{display:none}
 /* ловушка для ботов: людям не видна, заполняют только роботы */
@@ -216,6 +220,10 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 .zdone p{margin:0 0 20px;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
 .modal.sent .zf{display:none}
 .modal.sent .zdone{display:block}
+/* обещание на экране «Принято» должно совпадать с тем, что человек выбрал */
+.zdone .zwrite{display:none}
+.modal.write .zdone .zcall{display:none}
+.modal.write .zdone .zwrite{display:block}
 
 /* появление окна */
 dialog.modal{opacity:0;transform:translateY(10px) scale(.985);
@@ -508,6 +516,10 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         <input id="z-tel" name="phone" type="tel" inputmode="tel"
                autocomplete="tel" placeholder="+7 900 000-00-00" required>
       </div>
+      <label class="pick" for="z-msg">
+        <input id="z-msg" name="write" type="checkbox">
+        Лучше напишите в мессенджер, чем звонить
+      </label>
       <div class="row">
         <label for="z-co">Компания и сайт</label>
         <input id="z-co" name="company" type="text" autocomplete="organization"
@@ -525,7 +537,9 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     </form>
     <div class="zdone">
       <h4>Принято</h4>
-      <p>Позвоню сегодня. Не хотите ждать — наберите сами:
+      <p class="zcall">Позвоню сегодня. Не хотите ждать — наберите сами:
+         <nobr>+7 960 279-21-63</nobr>.</p>
+      <p class="zwrite">Напишу сегодня. Не хотите ждать — пишите сами:
          <nobr>+7 960 279-21-63</nobr>.</p>
       <button type="button" class="cta" data-close>Закрыть</button>
     </div>
@@ -562,7 +576,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   const send = form.querySelector('button[type=submit]');
 
   function open() {
-    dlg.classList.remove('sent');
+    dlg.classList.remove('sent', 'write');
     dlg.showModal();
     document.documentElement.style.overflow = 'hidden';
     // фокус в первое поле, но не на телефоне: там всплывёт клавиатура
@@ -617,6 +631,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           'Имя':      form.name_.value.trim(),
           'Телефон':  form.phone.value.trim(),
           'Компания': form.company.value.trim() || '—',
+          'Связь':    form.write.checked ? 'ПИСАТЬ в мессенджер' : 'можно звонить',
           'Страница': location.href
         })
       });
@@ -628,6 +643,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
       const good = out && (out.ok === true || String(out.success) === 'true');
       if (!good) throw new Error('not ok');
+      if (form.write.checked) dlg.classList.add('write');
       dlg.classList.add('sent');
     } catch (err) {
       msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
