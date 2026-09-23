@@ -157,24 +157,35 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 @media (hover:hover) and (pointer:fine){
   .modal-x:hover{background:var(--paper-2);border-color:var(--ink-3)}
 }
-.modal-body{padding:4px 24px 12px;overflow:auto}
-/* высоту айфрейма дальше выставляет скрипт Яндекса по содержимому */
-.modal-body iframe{display:block;width:100%;border:0;height:420px}
+.modal-body{padding:20px 24px 24px;overflow:auto}
 
-/* Яндекс отдаёт форму по системной теме пользователя, и переопределить это
-   снаружи нельзя: внутри кросс-доменного айфрейма prefers-color-scheme
-   слушает ОС. Поэтому окно темнеет вместе с формой — иначе её белый текст
-   ложится на белый фон и форма пропадает. */
-@media (prefers-color-scheme:dark){
-  dialog.modal{background:#1B1D22;color:#fff}
-  .modal-head{border-bottom-color:rgba(255,255,255,.16)}
-  .modal-head .sub{color:rgba(255,255,255,.55)}
-  .modal-x{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.72)}
-  @media (hover:hover) and (pointer:fine){
-    .modal-x:hover{background:rgba(255,255,255,.08);
-                   border-color:rgba(255,255,255,.4)}
-  }
-}
+/* ── поля ── */
+.zf{display:grid;gap:17px}
+.zf .row{display:grid;gap:7px}
+.zf label{font-size:13px;color:var(--ink-3)}
+.zf label .req{color:var(--rust)}
+.zf input{width:100%;font:400 16.5px/1.4 var(--sans);color:var(--ink);
+          background:#fff;border:1px solid var(--rule);border-radius:2px;
+          padding:13px 14px;transition:border-color 150ms ease}
+.zf input::placeholder{color:#AFB2B8}
+.zf input:focus{outline:2px solid var(--blue);outline-offset:-2px;
+                border-color:var(--blue)}
+.zf input[aria-invalid="true"]{border-color:var(--rust)}
+.zf .msg{margin:0;font-size:13.5px;line-height:1.45;color:var(--rust)}
+.zf .msg:empty{display:none}
+/* ловушка для ботов: людям не видна, заполняют только роботы */
+.zf .trap{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.zf .foot{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:3px}
+.zf button[type=submit]{border:0;cursor:pointer;font-family:var(--sans)}
+.zf button[disabled]{opacity:.55;cursor:default}
+.zf .hint{font-size:13px;line-height:1.45;color:var(--ink-3);max-width:26ch}
+
+/* ── подтверждение вместо формы ── */
+.zdone{display:none}
+.zdone h4{margin:0 0 8px;font:400 21px/1.3 var(--serif);letter-spacing:-.016em}
+.zdone p{margin:0 0 20px;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.modal.sent .zf{display:none}
+.modal.sent .zdone{display:block}
 
 /* появление окна */
 dialog.modal{opacity:0;transform:translateY(10px) scale(.985);
@@ -453,10 +464,41 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     </div>
     <button type="button" class="modal-x" aria-label="Закрыть">&#215;</button>
   </div>
-  <div class="modal-body"></div>
+  <div class="modal-body">
+    <form class="zf" novalidate>
+      <div class="row">
+        <label for="z-name">Как к вам обращаться <span class="req">*</span></label>
+        <input id="z-name" name="name_" type="text" autocomplete="name"
+               placeholder="Имя" required>
+      </div>
+      <div class="row">
+        <label for="z-tel">Телефон <span class="req">*</span></label>
+        <input id="z-tel" name="phone" type="tel" inputmode="tel"
+               autocomplete="tel" placeholder="+7 900 000-00-00" required>
+      </div>
+      <div class="row">
+        <label for="z-co">Компания и сайт</label>
+        <input id="z-co" name="company" type="text" autocomplete="organization"
+               placeholder="Необязательно">
+      </div>
+      <div class="trap" aria-hidden="true">
+        <label for="z-trap">Не заполняйте это поле</label>
+        <input id="z-trap" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <p class="msg" role="alert"></p>
+      <div class="foot">
+        <button type="submit" class="cta">Отправить</button>
+        <span class="hint">Позвоню сам. Ничего не рассылаем.</span>
+      </div>
+    </form>
+    <div class="zdone">
+      <h4>Принято</h4>
+      <p>Позвоню в течение дня. Если удобнее самому — <nobr>+7 960 279-21-63</nobr>,
+         отвечу лично.</p>
+      <button type="button" class="cta" data-close>Закрыть</button>
+    </div>
+  </div>
 </dialog>
-
-<script src="https://forms.yandex.ru/_static/embed.js" async></script>
 
 </div>
 
@@ -476,34 +518,90 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   setTimeout(() => tally.classList.add('on'), 340 + lines.length * 130 + 120);
 })();
 
-// Форма открывается окном. Айфрейм создаётся при первом открытии: иначе
-// каждый посетитель тянул бы Яндекс.Формы, даже не дойдя до кнопки.
+// Окно с формой заявки.
 (function () {
-  const dlg = document.getElementById('zayavka');
-  const body = dlg.querySelector('.modal-body');
-  const ID = '6ab17ac249af476240a3bb06';
-  let built = false;
+  // Приёмник заявок. Пересылает письмом на ledenev@omnor.ru.
+  // Когда поднимем свой обработчик — здесь меняется одна строка на '/api/zayavka'.
+  const ENDPOINT = 'https://formsubmit.co/ajax/ledenev@omnor.ru';
+
+  const dlg  = document.getElementById('zayavka');
+  const form = dlg.querySelector('.zf');
+  const msg  = form.querySelector('.msg');
+  const send = form.querySelector('button[type=submit]');
 
   function open() {
-    if (!built) {
-      const f = document.createElement('iframe');
-      f.src = 'https://forms.yandex.ru/u/' + ID + '/?iframe=1';
-      f.name = 'ya-form-' + ID;
-      f.title = 'Форма заявки на разбор';
-      body.appendChild(f);
-      built = true;
-    }
+    dlg.classList.remove('sent');
     dlg.showModal();
     document.documentElement.style.overflow = 'hidden';
+    // фокус в первое поле, но не на телефоне: там всплывёт клавиатура
+    if (matchMedia('(pointer:fine)').matches) form.querySelector('input').focus();
   }
 
   document.querySelectorAll('[data-form]').forEach(b =>
     b.addEventListener('click', open));
   dlg.querySelector('.modal-x').addEventListener('click', () => dlg.close());
+  dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
   // клик мимо окна закрывает: цель — сам dialog, а не его содержимое
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
   dlg.addEventListener('close', () => {
     document.documentElement.style.overflow = '';
+  });
+
+  function fail(field, text) {
+    msg.textContent = text;
+    if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+    return false;
+  }
+
+  function check() {
+    [...form.elements].forEach(el => el.removeAttribute('aria-invalid'));
+    msg.textContent = '';
+    const name = form.name_.value.trim();
+    const tel  = form.phone.value.trim();
+    if (name.length < 2) return fail(form.name_, 'Напишите, как к вам обращаться.');
+    // цифр меньше десяти — это не телефон, по такому не перезвонить
+    if ((tel.match(/\d/g) || []).length < 10)
+      return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
+    return true;
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (form.website.value) return;          // ловушка сработала — молча выходим
+    if (!check()) return;
+
+    send.disabled = true;
+    const label = send.textContent;
+    send.textContent = 'Отправляю…';
+
+    try {
+      const r = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Заявка с сайта — ' + form.name_.value.trim(),
+          _template: 'table',
+          _captcha: 'false',
+          'Имя':      form.name_.value.trim(),
+          'Телефон':  form.phone.value.trim(),
+          'Компания': form.company.value.trim() || '—',
+          'Страница': location.href
+        })
+      });
+      // одной проверки r.ok мало: пока обработчик не поднят, сервер отдаёт
+      // на этот адрес саму страницу с кодом 200 — и успех был бы ложным
+      const ct = r.headers.get('content-type') || '';
+      if (!r.ok || !ct.includes('application/json')) throw new Error(r.status);
+      const out = await r.json();
+      // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
+      const good = out && (out.ok === true || String(out.success) === 'true');
+      if (!good) throw new Error('not ok');
+      dlg.classList.add('sent');
+    } catch (err) {
+      msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
+      send.disabled = false;
+      send.textContent = label;
+    }
   });
 })();
 </script>
