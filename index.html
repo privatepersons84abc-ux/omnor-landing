@@ -591,7 +591,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   // на экране «Принято»
   const CH = {
     'Телефон':  { lab: 'Телефон',          ph: '+7 900 000-00-00', mode: 'tel'  },
-    'Telegram': { lab: 'Ник или телефон',  ph: '@nickname',        mode: 'text' },
+    'Telegram': { lab: 'Ник в Telegram',   ph: '@nickname',        mode: 'text' },
     'MAX':      { lab: 'Телефон в MAX',    ph: '+7 900 000-00-00', mode: 'tel'  }
   };
   let channel = 'Телефон';
@@ -643,8 +643,10 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     const digits = (val.match(/\d/g) || []).length;
     // в Telegram годится и ник, и номер; в MAX и по телефону — только номер
     if (channel === 'Telegram') {
+      // просим ник, но если человек вписал номер — принимаем молча:
+      // терять из-за этого заявку глупо, в Telegram он находится и по номеру
       if (!(/^@?[a-zA-Z0-9_]{4,}$/.test(val) || digits >= 10))
-        return fail(form.phone, 'Нужен ник вида @nickname или номер телефона.');
+        return fail(form.phone, 'Ник вида @nickname — он есть в настройках Telegram.');
     } else if (digits < 10) {
       return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
     }
