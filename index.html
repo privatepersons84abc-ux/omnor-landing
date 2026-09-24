@@ -188,6 +188,8 @@ a{color:inherit;text-decoration:none}
 .tally .v.wait{color:rgba(255,255,255,.3)}
 .tally .k{flex:1;min-width:0;font-size:13px;color:rgba(255,255,255,.62);
           line-height:1.35}
+.tally .k em{display:block;font-style:normal;color:#fff;white-space:nowrap;
+             font-variant-numeric:tabular-nums;margin-top:2px}
 /* призыв — четвёртой ячейкой той же полосы: итог по чужой заявке,
    и сразу рядом кнопка проверить на своей */
 .tally .go-in{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;
@@ -206,7 +208,7 @@ a{color:inherit;text-decoration:none}
 @media (max-width:760px){
   .tally .go-in{flex-direction:column;align-items:flex-start;gap:5px}
 }
-.tally .sum{flex:1.4}
+.tally .sum{flex:1.5}
 .tally .ask .v{color:var(--rust)}
 
 .cta-row{grid-column:1 / -1;display:flex;align-items:center;gap:22px;
@@ -244,7 +246,18 @@ a{color:inherit;text-decoration:none}
 .chain .step.hot{border-color:var(--rust)}
 .chain .step.hot i,.chain .step.hot b{color:var(--rust)}
 .chain .arr{flex:none;align-self:center;color:var(--rust);font-size:16px;
-            line-height:1;opacity:.75}
+            line-height:1}
+/* цепочка проявляется слева направо один раз, когда доходит до экрана:
+   так видно, что это последовательность, а не пять параллельных фактов */
+.chain .step,.chain .arr{opacity:0;transform:translateY(9px);
+                         transition:opacity .42s var(--out),transform .42s var(--out)}
+.chain .arr{transform:translateX(-6px)}
+.chain.on .step,.chain.on .arr{opacity:1;transform:none}
+.chain.on .arr{opacity:.75}
+@media (prefers-reduced-motion:reduce){
+  .chain .step,.chain .arr{opacity:1;transform:none;transition:none}
+  .chain .arr{opacity:.75}
+}
 @media (max-width:1120px){
   .chain{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
          width:100%;margin-left:0}
@@ -623,8 +636,9 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       </div></div>
 
       <div class="tally" id="tally">
-        <div class="sum"><div class="v tn">435&nbsp;591,68&nbsp;₽</div>
-          <div class="k">32 позиции сопоставлены и ушли в счёт</div></div>
+        <div class="sum"><div class="v tn">32</div>
+          <div class="k">позиции сопоставлены и ушли в счёт
+            <em>на 435&nbsp;591,68&nbsp;₽</em></div></div>
         <div class="ask"><div class="v tn">2</div>
           <div class="k">строки с вопросом клиенту</div></div>
         <div><div class="v tn">3</div>
@@ -678,9 +692,9 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       </ul>
       <div class="note">
         <p>«Пришлите список необходимых материалов — подготовим расчёт в течение
-           двух часов». Так пишут на сайтах оптовых поставщиков. Два часа — это
-           честно и даже быстро. Но заявка ушла не только вам, и решать будут
-           по первому счёту, который придёт.</p>
+           двух часов». Так пишут на сайтах оптовых поставщиков. Два часа —
+           нормальный срок, если заявка пришла только вам. Но она ушла ещё
+           нескольким, и пока вы считаете, снабженец уже читает чужой счёт.</p>
       </div>
     </div>
   </div>
@@ -692,8 +706,8 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     <div>
       <h2>Как работает OMNOR</h2>
       <p class="t">Сначала мы загружаем вашу номенклатуру из 1С — артикулы,
-         единицы измерения, виды цен и остатки. Дальше OMNOR работает только
-         по ней и ничего не придумывает.</p>
+         единицы измерения и виды цен. Дальше OMNOR работает только по ней
+         и ничего не придумывает.</p>
       <div class="chain">
         <div class="step"><i>01</i><b>Читает заявку</b>
           <span>Excel, CSV, PDF или текст письма. Таблицу в файле находит сам</span></div>
@@ -732,8 +746,8 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           <span>Подобрать транспорт под отгрузку. Вес, объём и количество паллет
             считает код, а не модель — здесь ошибаться нельзя.</span></div>
         <div><b>Задача закупщику</b>
-          <span>Если позиций не хватает на складе, OMNOR считает дефицит
-            и ставит задачу на закупку. Сам ничего не заказывает.</span></div>
+          <span>Позиции, которых нет в вашем прайсе, уходят закупщику — найти
+            поставщика и завести в номенклатуру. Сам OMNOR ничего не заказывает.</span></div>
         <div><b>Письмо клиенту</b>
           <span>Собрано и готово: счёт вложением и вопросы по позициям,
             которые не удалось сопоставить однозначно.</span></div>
@@ -1055,6 +1069,24 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     else if (!seen) { alive = false; }
   }, { threshold: 0.12 });
   io.observe(corr);
+})();
+
+// Цепочка в разделе 02 проявляется по шагам, один раз — дальше стоит.
+// Крутить её постоянно не стоит: на первом экране уже идёт лента.
+(function () {
+  const chain = document.querySelector('.chain');
+  if (!chain) return;
+  const kids = [...chain.children];
+  const show = () => {
+    chain.classList.add('on');
+    kids.forEach((el, i) => { el.style.transitionDelay = (i * 95) + 'ms'; });
+  };
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      !('IntersectionObserver' in window)) { chain.classList.add('on'); return; }
+  const io = new IntersectionObserver(es => {
+    if (es.some(e => e.isIntersecting)) { io.disconnect(); show(); }
+  }, { threshold: 0.25 });
+  io.observe(chain);
 })();
 
 // Форма заявки. Их на странице две — в окне по кнопке и вживую в блоке
