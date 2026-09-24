@@ -135,21 +135,35 @@ a{color:inherit;text-decoration:none}
            letter-spacing:.005em}
 .corr .cap i{font-style:normal;flex:0 0 38%}
 .corr .cap i:first-child{color:var(--ink-3)}
-/* в таблице пять строк, а в итогах 37 — без этой оговорки цифры
-   выглядят взятыми с потолка */
-.frag{margin:12px 0 0;font-size:13.5px;line-height:1.45;color:var(--ink-3)}
+.corr .cap .cnt{flex:0 0 96px;text-align:right;color:var(--ink-3);
+                font-weight:400;font-variant-numeric:tabular-nums}
+.corr .cap .cnt b{font-weight:500;color:var(--ink)}
+
+/* окно на несколько строк: заявка прокручивается в нём, как лента.
+   Снизу лёгкое затухание — видно, что список продолжается */
+.roll{position:relative;overflow:hidden;height:calc(var(--rh) * 6);
+      -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 34px),transparent);
+      mask-image:linear-gradient(to bottom,#000 calc(100% - 34px),transparent)}
+.strip{will-change:transform;transition:transform .5s cubic-bezier(.22,.61,.36,1)}
+@media (prefers-reduced-motion:reduce){
+  .roll{height:auto;-webkit-mask-image:none;mask-image:none}
+  .strip{transition:none}
+}
 
 /* курсор в правой колонке, пока она допечатывается */
 .res .car{display:inline-block;width:8px;height:1.02em;background:var(--rust);
           margin-left:2px;vertical-align:-2px;animation:car 1s steps(1) infinite}
 @keyframes car{0%,50%{opacity:1}50.01%,100%{opacity:0}}
-.line{display:flex;align-items:baseline;gap:20px;padding:10px 0;
+:root{--rh:46px}
+.line{display:flex;align-items:center;gap:20px;height:var(--rh);
       border-bottom:1px solid var(--rule-2)}
-.line .raw{flex:0 0 38%;font:400 17.5px/1.4 var(--mono);color:var(--ink-3);
-           letter-spacing:-.02em}
+.line .raw{flex:0 0 38%;min-width:0;font:400 17.5px/1.4 var(--mono);
+           color:var(--ink-3);letter-spacing:-.02em;
+           white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* минимальная высота — чтобы пустая строка не схлопывалась и таблица
    не дёргалась, пока колонка допечатывается */
-.line .res{flex:1;font-size:18px;line-height:1.4;min-height:1.4em}
+.line .res{flex:1;min-width:0;font-size:18px;line-height:1.4;
+           white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .line .res b{font-weight:500}
 .line .res .q{color:var(--rust)}
 .line .res .x{color:var(--ink-3)}
@@ -167,7 +181,7 @@ a{color:inherit;text-decoration:none}
 .tally div{flex:1;display:flex;align-items:center;gap:13px;padding:15px 20px;
            border-right:1px solid rgba(255,255,255,.14)}
 .tally div:last-child{border-right:none}
-.tally .v{flex:none;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
+.tally .v{flex:none;white-space:nowrap;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
           letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tally .v.wait{color:rgba(255,255,255,.3)}
 .tally .k{flex:1;min-width:0;font-size:13px;color:rgba(255,255,255,.62);
@@ -402,33 +416,124 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
        и ставит задачу логисту.</p>
 
     <div class="corr" id="corr">
-      <p class="frag">Фрагмент реальной заявки — пять строк из&nbsp;37.
-         Итоги внизу по всей заявке.</p>
+      <div class="cap"><i>Как написал снабженец</i><i>Что это в вашей номенклатуре</i><i class="cnt"><b id="cnt">0</b> из 37</i></div>
 
-      <div class="cap"><i>Как написал снабженец</i><i>Что это в вашей номенклатуре</i></div>
-
-      <div class="line"><span class="raw">Болт М10х80 ДИН933 оц.</span>
-        <span class="res"><b>Болт М10x80 DIN 933 оцинкованный</b></span>
-        <span class="st">200&nbsp;шт</span></div>
-
-      <div class="line"><span class="raw">ввгнг(а)-ls 5*6</span>
-        <span class="res"><b>Кабель ВВГнг(А)-LS 5x6 ГОСТ</b></span>
-        <span class="st">250&nbsp;м</span></div>
-
-      <div class="line"><span class="raw">кран шар. dn32</span>
-        <span class="res"><b>Кран шаровой DN32 ВР/НР латунь PN16</b></span>
-        <span class="st">18&nbsp;шт</span></div>
-
-      <div class="line"><span class="raw">Болт М10 оц.</span>
-        <span class="res"><span class="q">Не указана длина: 40, 60, 80, 100 или 120 мм?</span></span>
-        <span class="st w">вопрос</span></div>
-
-      <div class="line"><span class="raw">Лоток лестничный 200х80</span>
-        <span class="res"><span class="x">В вашем прайсе лотков нет</span></span>
-        <span class="st">—</span></div>
+      <div class="roll"><div class="strip" id="strip">
+        <div class="line"><span class="raw">Болт М10х80 ДИН933 оц.</span>
+          <span class="res"><b>Болт М10x80 DIN 933 оцинкованный</b></span>
+          <span class="st">200&nbsp;шт</span></div>
+        <div class="line"><span class="raw">болт м12*100 оцинк</span>
+          <span class="res"><b>Болт М12x100 DIN 933 оцинкованный</b></span>
+          <span class="st">150&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Болт М10 оц.</span>
+          <span class="res"><span class="q">Не указана длина: 40, 60, 80, 100 или 120 мм?</span></span>
+          <span class="st w">вопрос</span></div>
+        <div class="line"><span class="raw">Гайка М10 оц</span>
+          <span class="res"><b>Гайка М10 DIN 934 оцинкованная</b></span>
+          <span class="st">400&nbsp;шт</span></div>
+        <div class="line"><span class="raw">гайка м12</span>
+          <span class="res"><b>Гайка М12 DIN 934 оцинкованная</b></span>
+          <span class="st">300&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Шайба плоская 10</span>
+          <span class="res"><b>Шайба плоская М10 DIN 125 оцинкованная</b></span>
+          <span class="st">400&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Шайба плоская М12 ДИН125</span>
+          <span class="res"><b>Шайба плоская М12 DIN 125 оцинкованная</b></span>
+          <span class="st">300&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Анкер клиновой 10х100</span>
+          <span class="res"><b>Анкер клиновой 10x100 оцинкованный</b></span>
+          <span class="st">80&nbsp;шт</span></div>
+        <div class="line"><span class="raw">анкер клин. 12*135</span>
+          <span class="res"><b>Анкер клиновой 12x135 оцинкованный</b></span>
+          <span class="st">40&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Саморез по мет. 4,2х25</span>
+          <span class="res"><b>Саморез по металлу 4.2x25 оцинкованный</b></span>
+          <span class="st">2000&nbsp;шт</span></div>
+        <div class="line"><span class="raw">саморез 4.8*50 по металлу</span>
+          <span class="res"><b>Саморез по металлу 4.8x50 оцинкованный</b></span>
+          <span class="st">1000&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Дюбель-гвоздь 6х40 потай</span>
+          <span class="res"><b>Дюбель-гвоздь 6x40 потай нейлон</b></span>
+          <span class="st">1500&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Шпилька резьб. М12 1м оц</span>
+          <span class="res"><b>Шпилька резьбовая М12 L=1000 оцинкованная</b></span>
+          <span class="st">25&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Труба ППР PN20 д32</span>
+          <span class="res"><b>Труба PPR PN20 D32 белая</b></span>
+          <span class="st">180&nbsp;м</span></div>
+        <div class="line"><span class="raw">труба ппр pn20 25</span>
+          <span class="res"><b>Труба PPR PN20 D25 белая</b></span>
+          <span class="st">240&nbsp;м</span></div>
+        <div class="line"><span class="raw">Муфта ППР 32</span>
+          <span class="res"><b>Муфта PPR D32 белая</b></span>
+          <span class="st">60&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Угольник ППР 90гр 32</span>
+          <span class="res"><b>Угольник PPR 90° D32 белый</b></span>
+          <span class="st">80&nbsp;шт</span></div>
+        <div class="line"><span class="raw">тройник ппр д25</span>
+          <span class="res"><b>Тройник PPR D25 белый</b></span>
+          <span class="st">45&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Кран шаровой ДУ25 ВР/НР лат.</span>
+          <span class="res"><b>Кран шаровой DN25 ВР/НР латунь PN16</b></span>
+          <span class="st">30&nbsp;шт</span></div>
+        <div class="line"><span class="raw">кран шар. dn32</span>
+          <span class="res"><b>Кран шаровой DN32 ВР/НР латунь PN16</b></span>
+          <span class="st">18&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Фильтр косой ДУ25</span>
+          <span class="res"><b>Фильтр сетчатый косой DN25 PN16 латунь</b></span>
+          <span class="st">12&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Обратный клапан ду25 лат</span>
+          <span class="res"><b>Клапан обратный DN25 PN16 латунь</b></span>
+          <span class="st">12&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Труба канализ. ПВХ 110 2м</span>
+          <span class="res"><b>Труба канализационная ПВХ D110 L=2000</b></span>
+          <span class="st">60&nbsp;шт</span></div>
+        <div class="line"><span class="raw">отвод канализ 110 45 гр</span>
+          <span class="res"><b>Отвод канализационный ПВХ D110 45°</b></span>
+          <span class="st">45&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Радиатор алюм. 500 (секция)</span>
+          <span class="res"><b>Радиатор алюминиевый 500 мм 1 секция</b></span>
+          <span class="st">120&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Кабель ВВГнг LS 3х2,5</span>
+          <span class="res"><b>Кабель ВВГнг(А)-LS 3x2.5 ГОСТ</b></span>
+          <span class="st">800&nbsp;м</span></div>
+        <div class="line"><span class="raw">ввгнг(а)-ls 5*6</span>
+          <span class="res"><b>Кабель ВВГнг(А)-LS 5x6 ГОСТ</b></span>
+          <span class="st">250&nbsp;м</span></div>
+        <div class="line"><span class="raw">Кабель ВВГнг(А)-LS 4х16 ГОСТ</span>
+          <span class="res"><b>Кабель ВВГнг(А)-LS 4x16 ГОСТ</b></span>
+          <span class="st">120&nbsp;м</span></div>
+        <div class="line"><span class="raw">Провод ПуГВ 4 синий</span>
+          <span class="res"><b>Провод ПуГВ 4 мм2 синий</b></span>
+          <span class="st">300&nbsp;м</span></div>
+        <div class="line"><span class="raw">Гофра ПВХ д20 с зондом</span>
+          <span class="res"><b>Труба гофрированная ПВХ D20 с зондом</b></span>
+          <span class="st">500&nbsp;м</span></div>
+        <div class="line"><span class="raw">хомут нейлон 20х200 бел</span>
+          <span class="res"><b>Хомут нейлоновый 20x200 белый</b></span>
+          <span class="st">15&nbsp;уп</span></div>
+        <div class="line"><span class="raw">Авт. выключатель 1п 25А С</span>
+          <span class="res"><b>Автоматический выключатель 1P 25A C 4.5кА</b></span>
+          <span class="st">36&nbsp;шт</span></div>
+        <div class="line"><span class="raw">автомат 25а с</span>
+          <span class="res"><span class="q">Один полюс или три?</span></span>
+          <span class="st w">вопрос</span></div>
+        <div class="line"><span class="raw">автомат 3п 63а с</span>
+          <span class="res"><b>Автоматический выключатель 3P 63A C 4.5кА</b></span>
+          <span class="st">6&nbsp;шт</span></div>
+        <div class="line"><span class="raw">Лоток лестничный 200х80 L=3000</span>
+          <span class="res"><span class="x">Лотков в вашем прайсе нет</span></span>
+          <span class="st">—</span></div>
+        <div class="line"><span class="raw">Манометр радиальный 0-10 бар G1/2</span>
+          <span class="res"><span class="x">Манометров в вашем прайсе нет</span></span>
+          <span class="st">—</span></div>
+        <div class="line"><span class="raw">Смесь монтажная зимняя 25 кг</span>
+          <span class="res"><span class="x">Сухих смесей в вашем прайсе нет</span></span>
+          <span class="st">—</span></div>
+      </div></div>
 
       <div class="tally" id="tally">
-        <div class="sum"><div class="v tn">473&nbsp;473,70&nbsp;₽</div>
+        <div class="sum"><div class="v tn">435&nbsp;591,68&nbsp;₽</div>
           <div class="k">32 позиции сопоставлены и ушли в счёт</div></div>
         <div class="ask"><div class="v tn">2</div>
           <div class="k">строки с вопросом клиенту</div></div>
@@ -455,7 +560,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           aria-hidden="true"><path d="M0 0l26 15L0 30z" fill="#fff"/></svg></span>
         <span class="cap2">
           <b>Посмотреть, как это работает</b>
-          <i>4 минуты<em>, с моими комментариями</em></i>
+          <i>4 минуты<em> — разбор заявки целиком</em></i>
         </span>
       </button>
     </div>
@@ -685,49 +790,49 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   });
 })();
 
-// Таблица собирается на глазах: слева уже написано, как прислал снабженец,
-// справа OMNOR допечатывает, что это в номенклатуре. Крутится, пока блок
-// на экране; ушли со страницы — цикл встал, процессор не греется.
+// Заявка прокручивается в окне на шесть строк: первые разбираются
+// в темпе чтения, дальше машина ускоряется и остальные тридцать с лишним
+// проходят лентой. Крутится, только пока блок на экране.
 (function () {
   const corr  = document.getElementById('corr');
+  const strip = document.getElementById('strip');
+  const cnt   = document.getElementById('cnt');
   const tally = document.getElementById('tally');
-  const lines = [...document.querySelectorAll('.line')];
+  const lines = [...strip.querySelectorAll('.line')];
+  const SLOW  = 4;                       // сколько строк печатаем по буквам
 
-  // запоминаем итоговую разметку: в ней жирный текст, рыжий вопрос и серое
-  // «нет в прайсе» — печатаем простым текстом, в конце возвращаем как было
   const cells = lines.map(l => {
     const res = l.querySelector('.res');
     const kid = res.firstElementChild;
-    return {
-      res, html: res.innerHTML, text: res.textContent.trim(),
-      tag: kid ? kid.tagName.toLowerCase() : 'span',
-      cls: kid ? kid.className : ''
-    };
+    return { res, html: res.innerHTML, text: res.textContent.trim(),
+             tag: kid ? kid.tagName.toLowerCase() : 'span',
+             cls: kid ? kid.className : '' };
   });
 
-  // итоги: запоминаем конечные числа, чтобы во время набора показывать
-  // прочерк, а в конце досчитать до них
   const sums = [...tally.querySelectorAll('.v')].map(el => {
     const raw = el.textContent.replace(/\u00a0/g, ' ').trim();
-    const num = parseFloat(raw.replace(/[^\d,.-]/g, '').replace(',', '.'));
-    return { el, num, money: raw.includes('₽'), final: el.textContent };
+    return { el, final: el.textContent, money: raw.includes('₽'),
+             num: parseFloat(raw.replace(/[^\d,.-]/g, '').replace(',', '.')) };
   });
+  // ширину чисел фиксируем по итоговой: иначе блок меняет высоту
+  // при пересчёте и кнопка под ним прыгает
+  requestAnimationFrame(() => sums.forEach(s => {
+    s.el.style.minWidth = Math.ceil(s.el.getBoundingClientRect().width) + 'px';
+  }));
+
+  const rh = () => parseFloat(getComputedStyle(document.documentElement)
+                   .getPropertyValue('--rh')) || 46;
   const paint = (s, n) => {
     s.el.textContent = s.money
       ? n.toLocaleString('ru-RU', { minimumFractionDigits: 2,
                                     maximumFractionDigits: 2 }) + '\u00a0₽'
       : String(Math.round(n));
   };
-  const wait = () => sums.forEach(s => {
-    s.el.classList.add('wait'); s.el.textContent = '—';
-  });
-  const settle = () => sums.forEach(s => {
-    s.el.classList.remove('wait'); s.el.textContent = s.final;
-  });
 
   const showAll = () => {
     cells.forEach((c, i) => { c.res.innerHTML = c.html; lines[i].classList.add('done'); });
-    settle();
+    sums.forEach(s => { s.el.classList.remove('wait'); s.el.textContent = s.final; });
+    cnt.textContent = String(lines.length);
   };
 
   if (matchMedia('(prefers-reduced-motion: reduce)').matches ||
@@ -737,40 +842,61 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   const nap = ms => new Promise(r => setTimeout(r, ms));
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
+  function ease(my, dur, step) {          // плавность через кадры, а не таймер
+    return new Promise(done => {
+      let over = false;
+      const fin = () => { if (!over) { over = true; done(); } };
+      // в скрытой вкладке кадры не приходят вовсе: без страховки счётчик
+      // застыл бы на полпути и цикл не пошёл бы дальше
+      const guard = setTimeout(fin, dur + 600);
+      const t0 = performance.now();
+      const tick = now => {
+        if (over) return;
+        if (!alive || my !== token) { clearTimeout(guard); return fin(); }
+        const k = Math.min(1, (now - t0) / dur);
+        step(1 - Math.pow(1 - k, 3));
+        if (k < 1) requestAnimationFrame(tick);
+        else { clearTimeout(guard); fin(); }
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
   async function cycle(my) {
     while (alive && my === token) {
       cells.forEach((c, i) => { c.res.innerHTML = ''; lines[i].classList.remove('done'); });
-      wait();
-      await nap(500);
+      sums.forEach(s => { s.el.classList.add('wait'); s.el.textContent = '—'; });
+      cnt.textContent = '0';
+      strip.style.transform = 'translateY(0)';
+      await nap(550);
 
       for (let i = 0; i < cells.length; i++) {
         const c = cells[i];
-        for (let n = 1; n <= c.text.length; n++) {
-          if (!alive || my !== token) return;
-          c.res.innerHTML = '<' + c.tag + ' class="' + c.cls + '">' +
-                            esc(c.text.slice(0, n)) +
-                            '</' + c.tag + '><i class="car"></i>';
-          // паузы разной длины: ровный ритм читается машинно
-          await nap(16 + Math.random() * 20);
+        if (i < SLOW) {
+          for (let n = 1; n <= c.text.length; n++) {
+            if (!alive || my !== token) return;
+            c.res.innerHTML = '<' + c.tag + ' class="' + c.cls + '">' +
+                              esc(c.text.slice(0, n)) + '</' + c.tag + '><i class="car"></i>';
+            await nap(15 + Math.random() * 18);
+          }
         }
         if (!alive || my !== token) return;
         c.res.innerHTML = c.html;
         lines[i].classList.add('done');
-        await nap(330);
+        cnt.textContent = String(i + 1);
+        // на быстрой фазе лента должна поспевать за строками: с полусекундным
+        // ходом она отставала на несколько строк и показывала не то, что сейчас
+        strip.style.transitionDuration = i < SLOW ? '.45s' : '.13s';
+        strip.style.transform = 'translateY(' + (-Math.max(0, i - 4) * rh()) + 'px)';
+        await nap(i < SLOW ? 300 : 108);
       }
-      // числа не возникают из ниоткуда, а досчитываются — видно, что считали
-      sums.forEach(s => s.el.classList.remove('wait'));
-      const t0 = performance.now(), dur = 620;
-      while (alive && my === token) {
-        const k = Math.min(1, (performance.now() - t0) / dur);
-        const e = 1 - Math.pow(1 - k, 3);
-        sums.forEach(s => paint(s, s.num * e));
-        if (k === 1) break;
-        await nap(16);
-      }
+
+      await ease(my, 760, k => sums.forEach(s => {
+        s.el.classList.remove('wait'); paint(s, s.num * k);
+      }));
       if (!alive || my !== token) return;
-      settle();
-      await nap(3600);
+      sums.forEach(s => s.el.textContent = s.final);
+      await nap(4200);
     }
   }
 
@@ -778,7 +904,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     const seen = es.some(e => e.isIntersecting);
     if (seen && !alive) { alive = true; cycle(++token); }
     else if (!seen) { alive = false; }
-  }, { threshold: 0.15 });
+  }, { threshold: 0.12 });
   io.observe(corr);
 })();
 
