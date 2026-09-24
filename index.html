@@ -246,7 +246,6 @@ a{color:inherit;text-decoration:none}
           box-shadow:0 -1px 0 var(--rust) inset;padding:0 2px}
 
 /* блок связи: три рабочих канала вместо одной кнопки в никуда */
-/* главная карточка во всю ширину, под ней запасные пути в ряд */
 .contacts{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;
           background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.16)}
 .contacts .card{display:flex;flex-direction:column;gap:7px;padding:26px 28px;
@@ -269,14 +268,7 @@ a{color:inherit;text-decoration:none}
 }
 /* главный путь — цветом, а не размером: звонок и почта остаются рядом
    как равные по форме, но явно запасные */
-.contacts .act{grid-column:1 / -1;background:var(--rust);border:0;cursor:pointer;
-               text-align:left;font-family:var(--sans)}
-.contacts .act .lab{color:rgba(255,255,255,.66)}
-.contacts .act .val{color:#fff}
-.contacts .act .hint{color:rgba(255,255,255,.72)}
-@media (hover:hover) and (pointer:fine){
-  .contacts .act:hover{background:#B8460F}
-}
+
 
 /* ── окно с формой ── */
 dialog.modal{border:0;padding:0;color:var(--ink);background:var(--paper);
@@ -357,6 +349,31 @@ dialog.modal[open]::backdrop{opacity:1}
 @starting-style{dialog.modal[open]::backdrop{opacity:0}}
 @media (prefers-reduced-motion:reduce){
   dialog.modal,dialog.modal::backdrop{transition:none}
+}
+
+/* блок связи: слева обещание, справа форма на светлой карточке */
+.stamp .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
+            gap:48px 56px;align-items:start}
+.stamp .say{padding-top:4px}
+.eyebrow{display:inline-block;font:500 12px/1 var(--sans);letter-spacing:.11em;
+         text-transform:uppercase;color:var(--rust);margin:0 0 16px;
+         padding-left:30px;position:relative}
+.eyebrow:before{content:"";position:absolute;left:0;top:50%;width:20px;height:1px;
+                background:var(--rust)}
+.stamp .tiny{font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.45);
+             margin:16px 0 0;max-width:42ch}
+.stamp .contacts{grid-column:1 / -1}
+
+.pane{background:var(--paper);color:var(--ink);padding:26px 28px 28px}
+.pane h3{margin:0 0 18px;font:500 17.5px/1.3 var(--sans);letter-spacing:-.005em}
+.pane .zf input{background:#fff}
+.done-in{display:none}
+.done-in h4{margin:0 0 8px;font:400 21px/1.3 var(--serif);letter-spacing:-.016em}
+.done-in p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
+.pane.sent h3,.pane.sent .zf{display:none}
+.pane.sent .done-in{display:block}
+@media (max-width:980px){
+  .stamp .duo{grid-template-columns:1fr;gap:34px}
 }
 
 /* ── подвал-штамп ── */
@@ -694,17 +711,67 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 </div>
 
 <div class="stamp" id="svyaz">
-  <div class="w">
-    <h2>Проверьте на своей заявке</h2>
-    <p>Одна заявка на 20–30&nbsp;позиций, обезличенная, и выгрузка прайса из 1С.
-       Вернём разбор и готовый счёт — увидите на своих данных, что из этого
-       работает, а что пока нет.</p>
+  <div class="w duo">
+    <div class="say">
+      <span class="eyebrow">Проверка на ваших данных</span>
+      <h2>Покажу на вашей заявке, а не на своей</h2>
+      <p>Обещать умеет каждый. Пришлите одну обезличенную заявку и выгрузку
+         прайса из 1С — верну разбор и готовый счёт. Увидите на своих позициях,
+         что сопоставилось, где OMNOR задал вопрос и чего у вас в прайсе нет.</p>
+      <p class="tiny">Бесплатно и ни к чему не обязывает. Файл удобнее прислать
+         в Telegram или почтой — после разговора.</p>
+    </div>
+
+    <div class="pane">
+      <h3>Оставьте контакт — свяжусь сегодня</h3>
+      <form class="zf" novalidate>
+      <div class="row">
+        <label for="s-name">Как к вам обращаться <span class="req">*</span></label>
+        <input id="s-name" name="name_" type="text" autocomplete="name"
+               placeholder="Имя" required>
+      </div>
+      <div class="row">
+        <label>Как с вами связаться <span class="req">*</span></label>
+        <div class="seg" role="group">
+          <button type="button" data-ch="Телефон" aria-pressed="true">Телефон</button>
+          <button type="button" data-ch="Telegram" aria-pressed="false">Telegram</button>
+          <button type="button" data-ch="MAX" aria-pressed="false">MAX</button>
+        </div>
+      </div>
+      <div class="row">
+        <label for="s-tel" id="s-tel-lab">Телефон <span class="req">*</span></label>
+        <input id="s-tel" name="phone" type="tel" inputmode="tel"
+               autocomplete="tel" placeholder="+7 900 000-00-00" required>
+      </div>
+      <div class="row">
+        <label for="s-co">Компания и сайт</label>
+        <input id="s-co" name="company" type="text" autocomplete="organization"
+               placeholder="Необязательно">
+      </div>
+      <div class="trap" aria-hidden="true">
+        <label for="s-trap">Не заполняйте это поле</label>
+        <input id="s-trap" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <label class="ok" for="s-ok">
+        <input id="s-ok" name="agree" type="checkbox">
+        <span>Согласен на обработку своих данных, чтобы со мной связались.
+          <a href="/privacy.html" target="_blank" rel="noopener">Как я их
+          обрабатываю</a>.</span>
+      </label>
+      <p class="msg" role="alert"></p>
+      <div class="foot">
+        <button type="submit" class="cta">Отправить</button>
+        <span class="hint">Свяжусь лично. Рассылок не будет.</span>
+      </div>
+    </form>
+      <div class="done-in">
+        <h4>Принято</h4>
+        <p>Свяжусь сегодня. Не хотите ждать — <nobr>+7 960 279-21-63</nobr>
+           или <nobr>@north_glow</nobr>.</p>
+      </div>
+    </div>
+
     <div class="contacts">
-      <button type="button" class="card act" data-form>
-        <span class="lab">Заявка</span>
-        <span class="val">Получить разбор</span>
-        <span class="hint">Позвоню или напишу — как удобнее</span>
-      </button>
       <a class="card tel" href="tel:+79602792163">
         <span class="lab">Позвонить</span>
         <span class="val">+7 960 279-21-63</span>
@@ -924,126 +991,132 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   io.observe(corr);
 })();
 
-// Окно с формой заявки.
+// Форма заявки. Их на странице две — в окне по кнопке и вживую в блоке
+// связи, — поэтому обвязка общая, а не привязана к одной.
 (function () {
   // Приёмник заявок. Пересылает письмом на ledenev@omnor.ru.
   // Когда поднимем свой обработчик — здесь меняется одна строка на '/api/zayavka'.
   const ENDPOINT = 'https://formsubmit.co/ajax/ledenev@omnor.ru';
 
-  const dlg  = document.getElementById('zayavka');
-  const form = dlg.querySelector('.zf');
-  const msg  = form.querySelector('.msg');
-  const send = form.querySelector('button[type=submit]');
-
-  // выбранный канал: от него зависят подпись поля, проверка и обещание
+  // от выбранного канала зависят подпись поля, проверка и обещание
   // на экране «Принято»
   const CH = {
     'Телефон':  { lab: 'Телефон',          ph: '+7 900 000-00-00', mode: 'tel'  },
     'Telegram': { lab: 'Ник в Telegram',   ph: '@nickname',        mode: 'text' },
     'MAX':      { lab: 'Телефон в MAX',    ph: '+7 900 000-00-00', mode: 'tel'  }
   };
-  let channel = 'Телефон';
-  const chLab = form.querySelector('#z-tel-lab');
-  const chInp = form.phone;
 
-  form.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
-    channel = b.dataset.ch;
-    form.querySelectorAll('.seg button').forEach(x =>
-      x.setAttribute('aria-pressed', String(x === b)));
-    const c = CH[channel];
-    chLab.innerHTML = c.lab + ' <span class="req">*</span>';
-    chInp.placeholder = c.ph;
-    chInp.inputMode = c.mode;
-    chInp.removeAttribute('aria-invalid');
-    msg.textContent = '';
-  }));
+  function wire(form, done) {
+    const msg  = form.querySelector('.msg');
+    const send = form.querySelector('button[type=submit]');
+    const lab  = form.querySelector('[id$="-tel-lab"]');
+    let channel = 'Телефон';
 
-  function open() {
+    form.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+      channel = b.dataset.ch;
+      form.querySelectorAll('.seg button').forEach(x =>
+        x.setAttribute('aria-pressed', String(x === b)));
+      const c = CH[channel];
+      lab.innerHTML = c.lab + ' <span class="req">*</span>';
+      form.phone.placeholder = c.ph;
+      form.phone.inputMode = c.mode;
+      form.phone.removeAttribute('aria-invalid');
+      msg.textContent = '';
+    }));
+
+    const fail = (field, text) => {
+      msg.textContent = text;
+      if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+      return false;
+    };
+
+    function check() {
+      [...form.elements].forEach(el => el.removeAttribute('aria-invalid'));
+      msg.textContent = '';
+      const name = form.name_.value.trim();
+      const val  = form.phone.value.trim();
+      if (name.length < 2) return fail(form.name_, 'Напишите, как к вам обращаться.');
+      const digits = (val.match(/\d/g) || []).length;
+      if (channel === 'Telegram') {
+        // просим ник, но если человек вписал номер — принимаем молча:
+        // терять из-за этого заявку глупо, в Telegram он находится и по номеру
+        if (!(/^@?[a-zA-Z0-9_]{4,}$/.test(val) || digits >= 10))
+          return fail(form.phone, 'Ник вида @nickname — он есть в настройках Telegram.');
+      } else if (digits < 10) {
+        return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
+      }
+      if (!form.agree.checked)
+        return fail(form.agree, 'Без согласия на обработку данных отправить не смогу.');
+      return true;
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (form.website.value) return;        // ловушка сработала — молча выходим
+      if (!check()) return;
+
+      send.disabled = true;
+      const label = send.textContent;
+      send.textContent = 'Отправляю…';
+
+      try {
+        const r = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            _subject: 'Заявка с сайта — ' + form.name_.value.trim()
+                      + ' (' + channel + ')',
+            _template: 'table',
+            _captcha: 'false',
+            'Имя':      form.name_.value.trim(),
+            'Канал':    channel,
+            'Контакт':  form.phone.value.trim(),
+            'Компания': form.company.value.trim() || '—',
+            'Страница': location.href
+          })
+        });
+        // одной проверки r.ok мало: приёмник отвечает 200 и на отказ.
+        // Тип ответа не проверяем — он приходит как text/html, хотя внутри
+        // JSON. Разбор сам упадёт, если вместо ответа прилетит страница.
+        if (!r.ok) throw new Error(r.status);
+        const out = await r.json();
+        // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
+        if (!(out && (out.ok === true || String(out.success) === 'true')))
+          throw new Error('not ok');
+        done(channel);
+      } catch (err) {
+        msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
+        send.disabled = false;
+        send.textContent = label;
+      }
+    });
+  }
+
+  // форма в окне
+  const dlg = document.getElementById('zayavka');
+  wire(dlg.querySelector('.zf'), ch => {
+    if (ch !== 'Телефон') dlg.classList.add('write');
+    dlg.classList.add('sent');
+  });
+
+  const open = () => {
     dlg.classList.remove('sent', 'write');
     dlg.showModal();
     document.documentElement.style.overflow = 'hidden';
     // фокус в первое поле, но не на телефоне: там всплывёт клавиатура
-    if (matchMedia('(pointer:fine)').matches) form.querySelector('input').focus();
-  }
-
-  document.querySelectorAll('[data-form]').forEach(b =>
-    b.addEventListener('click', open));
+    if (matchMedia('(pointer:fine)').matches)
+      dlg.querySelector('.zf input').focus();
+  };
+  document.querySelectorAll('[data-form]').forEach(b => b.addEventListener('click', open));
   dlg.querySelector('.modal-x').addEventListener('click', () => dlg.close());
   dlg.querySelector('[data-close]').addEventListener('click', () => dlg.close());
   // клик мимо окна закрывает: цель — сам dialog, а не его содержимое
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-  dlg.addEventListener('close', () => {
-    document.documentElement.style.overflow = '';
-  });
+  dlg.addEventListener('close', () => { document.documentElement.style.overflow = ''; });
 
-  function fail(field, text) {
-    msg.textContent = text;
-    if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
-    return false;
-  }
-
-  function check() {
-    [...form.elements].forEach(el => el.removeAttribute('aria-invalid'));
-    msg.textContent = '';
-    const name = form.name_.value.trim();
-    const val  = form.phone.value.trim();
-    if (name.length < 2) return fail(form.name_, 'Напишите, как к вам обращаться.');
-    const digits = (val.match(/\d/g) || []).length;
-    // в Telegram годится и ник, и номер; в MAX и по телефону — только номер
-    if (channel === 'Telegram') {
-      // просим ник, но если человек вписал номер — принимаем молча:
-      // терять из-за этого заявку глупо, в Telegram он находится и по номеру
-      if (!(/^@?[a-zA-Z0-9_]{4,}$/.test(val) || digits >= 10))
-        return fail(form.phone, 'Ник вида @nickname — он есть в настройках Telegram.');
-    } else if (digits < 10) {
-      return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
-    }
-    if (!form.agree.checked)
-      return fail(form.agree, 'Без согласия на обработку данных отправить не смогу.');
-    return true;
-  }
-
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    if (form.website.value) return;          // ловушка сработала — молча выходим
-    if (!check()) return;
-
-    send.disabled = true;
-    const label = send.textContent;
-    send.textContent = 'Отправляю…';
-
-    try {
-      const r = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          _subject: 'Заявка с сайта — ' + form.name_.value.trim()
-                    + ' (' + channel + ')',
-          _template: 'table',
-          _captcha: 'false',
-          'Имя':      form.name_.value.trim(),
-          'Канал':    channel,
-          'Контакт':  form.phone.value.trim(),
-          'Компания': form.company.value.trim() || '—',
-          'Страница': location.href
-        })
-      });
-      // одной проверки r.ok мало: приёмник отвечает 200 и на отказ.
-      // Тип ответа не проверяем — он приходит как text/html, хотя внутри
-      // JSON. Разбор сам упадёт, если вместо ответа прилетит страница.
-      if (!r.ok) throw new Error(r.status);
-      const out = await r.json();
-      // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
-      const good = out && (out.ok === true || String(out.success) === 'true');
-      if (!good) throw new Error('not ok');
-      if (channel !== 'Телефон') dlg.classList.add('write');
-      dlg.classList.add('sent');
-    } catch (err) {
-      msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
-      send.disabled = false;
-      send.textContent = label;
-    }
-  });
+  // форма в блоке связи
+  const pane = document.querySelector('.pane');
+  if (pane) wire(pane.querySelector('.zf'), () => pane.classList.add('sent'));
 })();
 </script>
 </html>
