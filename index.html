@@ -73,10 +73,32 @@ a{color:inherit;text-decoration:none}
            margin:0 0 6px;max-width:46ch}
 
 /* ── соответствие: главный приём ── */
-.corr{grid-column:1 / -1;margin:46px 0 0;border-top:1px solid var(--ink)}
-.corr .cap{display:flex;padding:9px 0;border-bottom:1px solid var(--rule);
-           font-size:13px;color:var(--ink-3)}
-.corr .cap i{font-style:normal;flex:0 0 40%}
+/* ── видео на первом экране ── */
+.vsl{grid-column:1 / -1;margin:40px 0 0;position:relative;background:#0E0F12;
+     border:1px solid var(--rule);aspect-ratio:16/9;max-height:min(62vh,640px)}
+.vsl video{display:block;width:100%;height:100%;object-fit:contain;background:#0E0F12}
+.vsl .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+           background:#0E0F12}
+.vsl .go{position:absolute;inset:0;display:flex;flex-direction:column;
+         align-items:center;justify-content:center;gap:14px;cursor:pointer;
+         border:0;background:rgba(10,11,13,.32);color:#fff;font-family:var(--sans);
+         transition:background 200ms ease}
+.vsl .go:after{content:"";width:0;height:0;border-style:solid;
+               border-width:17px 0 17px 28px;border-color:transparent transparent
+               transparent #fff;margin-left:6px;order:-1}
+.vsl .go b{font:500 17px/1.3 var(--sans)}
+.vsl .go span{font-size:14px;color:rgba(255,255,255,.72)}
+@media (hover:hover) and (pointer:fine){.vsl .go:hover{background:rgba(10,11,13,.18)}}
+.vsl.on .shot,.vsl.on .go{display:none}
+@media (max-width:760px){.vsl{margin-top:30px;max-height:none}}
+
+.corr{grid-column:1 / -1;margin:56px 0 0;border-top:1px solid var(--ink)}
+.corr .cap{display:flex;gap:20px;padding:12px 0;
+           border-bottom:1px solid var(--rule);
+           font:500 14.5px/1.3 var(--sans);color:var(--ink);
+           letter-spacing:.005em}
+.corr .cap i{font-style:normal;flex:0 0 38%}
+.corr .cap i:first-child{color:var(--ink-3)}
 .line{display:flex;align-items:baseline;gap:20px;padding:17px 0;
       border-bottom:1px solid var(--rule-2)}
 .line .raw{flex:0 0 38%;font:400 17.5px/1.4 var(--mono);color:var(--ink-3);
@@ -213,6 +235,12 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 @media (hover:hover) and (pointer:fine){
   .zf .seg button:not([aria-pressed="true"]):hover{background:var(--paper-2)}
 }
+.zf .ok{display:flex;align-items:flex-start;gap:9px;cursor:pointer;
+        font-size:13.5px;line-height:1.5;color:var(--ink-3);margin-top:-2px}
+.zf .ok input{width:17px;height:17px;flex:none;margin:2px 0 0;padding:0;
+              accent-color:var(--rust);cursor:pointer}
+.zf .ok a{color:var(--ink-2);text-decoration:underline;
+          text-underline-offset:2px}
 .zf .msg{margin:0;font-size:13.5px;line-height:1.45;color:var(--rust)}
 .zf .msg:empty{display:none}
 /* ловушка для ботов: людям не видна, заполняют только роботы */
@@ -319,6 +347,21 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
        с вашей номенклатурой, выставляет счёт в 1С, заводит сделку в CRM
        и ставит задачу логисту.</p>
 
+    <div class="vsl" id="vsl">
+      <video id="vid" controls preload="none" playsinline
+             poster="video/poster.jpg" src="video/omnor.mp4"></video>
+      <img class="shot" src="video/poster.jpg" alt="" aria-hidden="true">
+      <button type="button" class="go" id="play">
+        <b>Посмотреть, как это работает</b>
+        <span>4 минуты, с моими комментариями</span>
+      </button>
+    </div>
+
+    <div class="cta-row">
+      <button type="button" class="cta" data-form>Проверить на своей заявке</button>
+      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
+    </div>
+
     <div class="corr" id="corr">
       <div class="cap"><i>Как написал снабженец</i><i>Что это в вашей номенклатуре</i></div>
 
@@ -352,10 +395,6 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       </div>
     </div>
 
-    <div class="cta-row">
-      <button type="button" class="cta" data-form>Проверить на своей заявке</button>
-      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
-    </div>
   </div>
 </div>
 
@@ -500,6 +539,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     <span class="sp"></span>
     <a href="mailto:ledenev@omnor.ru">ledenev@omnor.ru</a>
     <a href="tel:+79602792163">+7 960 279-21-63</a>
+    <a href="/privacy.html">Политика конфиденциальности</a>
   </div>
 </footer>
 
@@ -541,6 +581,12 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         <label for="z-trap">Не заполняйте это поле</label>
         <input id="z-trap" name="website" type="text" tabindex="-1" autocomplete="off">
       </div>
+      <label class="ok" for="z-ok">
+        <input id="z-ok" name="agree" type="checkbox">
+        <span>Согласен на обработку своих данных, чтобы со мной связались.
+          <a href="/privacy.html" target="_blank" rel="noopener">Как я их
+          обрабатываю</a>.</span>
+      </label>
       <p class="msg" role="alert"></p>
       <div class="foot">
         <button type="submit" class="cta">Отправить</button>
@@ -561,8 +607,21 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 </div>
 
 <script>
-// Один срежиссированный момент на загрузке: строки заявки разрешаются
-// в номенклатуру сверху вниз. Дальше по странице движения нет.
+// Видео первого экрана грузится только по нажатию: 30 МБ не должны
+// тянуться у каждого, кто просто открыл страницу.
+(function () {
+  const box = document.getElementById('vsl');
+  const vid = document.getElementById('vid');
+  document.getElementById('play').addEventListener('click', () => {
+    box.classList.add('on');
+    vid.preload = 'auto';
+    vid.play();
+  });
+})();
+
+// Один срежиссированный момент: строки заявки разрешаются в номенклатуру
+// сверху вниз. Таблица теперь ниже сгиба, поэтому ждём, пока до неё
+// доскроллят, — иначе всё отыграет в пустоту.
 (function () {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const lines = [...document.querySelectorAll('.line')];
@@ -572,8 +631,16 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     tally.classList.add('on');
     return;
   }
-  lines.forEach((l, i) => setTimeout(() => l.classList.add('on'), 340 + i * 130));
-  setTimeout(() => tally.classList.add('on'), 340 + lines.length * 130 + 120);
+  const run = () => {
+    lines.forEach((l, i) => setTimeout(() => l.classList.add('on'), 140 + i * 130));
+    setTimeout(() => tally.classList.add('on'), 140 + lines.length * 130 + 120);
+  };
+  const corr = document.getElementById('corr');
+  if (!('IntersectionObserver' in window)) { run(); return; }
+  const io = new IntersectionObserver(es => {
+    if (es.some(e => e.isIntersecting)) { io.disconnect(); run(); }
+  }, { threshold: 0.2 });
+  io.observe(corr);
 })();
 
 // Окно с формой заявки.
@@ -650,6 +717,8 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     } else if (digits < 10) {
       return fail(form.phone, 'Телефон нужен целиком, с кодом города или оператора.');
     }
+    if (!form.agree.checked)
+      return fail(form.agree, 'Без согласия на обработку данных отправить не смогу.');
     return true;
   }
 
