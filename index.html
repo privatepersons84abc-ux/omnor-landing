@@ -186,6 +186,7 @@ a{color:inherit;text-decoration:none}
 .tally .v{flex:none;white-space:nowrap;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
           letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tally .v.wait{color:rgba(255,255,255,.3)}
+.tally .k em.wait{color:rgba(255,255,255,.3)}
 .tally .k{flex:1;min-width:0;font-size:13px;color:rgba(255,255,255,.62);
           line-height:1.35}
 .tally .k em{display:block;font-style:normal;color:#fff;white-space:nowrap;
@@ -967,9 +968,11 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
              cls: kid ? kid.className : '' };
   });
 
-  const sums = [...tally.querySelectorAll('.v')].map(el => {
+  // сумма в подписи считается вместе с числами: она такой же итог
+  const sums = [...tally.querySelectorAll('.v, .k em')].map(el => {
     const raw = el.textContent.replace(/\u00a0/g, ' ').trim();
-    return { el, final: el.textContent, money: raw.includes('₽'),
+    const pre = raw.startsWith('на ') ? 'на\u00a0' : '';
+    return { el, pre, final: el.textContent, money: raw.includes('₽'),
              num: parseFloat(raw.replace(/[^\d,.-]/g, '').replace(',', '.')) };
   });
   // ширину чисел фиксируем по итоговой: иначе блок меняет высоту
@@ -981,10 +984,10 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   const rh = () => parseFloat(getComputedStyle(document.documentElement)
                    .getPropertyValue('--rh')) || 46;
   const paint = (s, n) => {
-    s.el.textContent = s.money
+    s.el.textContent = s.pre + (s.money
       ? n.toLocaleString('ru-RU', { minimumFractionDigits: 2,
                                     maximumFractionDigits: 2 }) + '\u00a0₽'
-      : String(Math.round(n));
+      : String(Math.round(n)));
   };
 
   const showAll = () => {
@@ -1023,7 +1026,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   async function cycle(my) {
     while (alive && my === token) {
       cells.forEach((c, i) => { c.res.innerHTML = ''; lines[i].classList.remove('done'); });
-      sums.forEach(s => { s.el.classList.add('wait'); s.el.textContent = '—'; });
+      sums.forEach(s => { s.el.classList.add('wait'); s.el.textContent = s.pre + '—'; });
       cnt.textContent = '0';
       strip.style.transform = 'translateY(0)';
       await nap(550);
