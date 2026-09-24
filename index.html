@@ -128,7 +128,7 @@ a{color:inherit;text-decoration:none}
   .vsl .go .disc{width:62px;height:62px}
 }
 
-.corr{grid-column:1 / -1;margin:18px 0 0;border-top:1px solid var(--ink)}
+.corr{grid-column:1 / -1;margin:16px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;gap:20px;padding:9px 0;
            border-bottom:1px solid var(--rule);
            font:500 14.5px/1.3 var(--sans);color:var(--ink);
@@ -175,18 +175,38 @@ a{color:inherit;text-decoration:none}
 /* блок стоит на месте всегда: раньше он целиком появлялся и исчезал
    на каждом круге, и это дёргало страницу. Пока таблица набирается,
    вместо чисел стоят прочерки */
-.tally{display:flex;gap:0;margin-top:22px;background:var(--ink);color:#fff}
+.tally{display:flex;flex-wrap:wrap;gap:0;margin-top:18px;
+       background:var(--ink);color:#fff}
 /* число и подпись в строку, а не друг под другом: так блок втрое ниже
    и помещается на первый экран вместе с таблицей */
-.tally div{flex:1;display:flex;align-items:center;gap:13px;padding:15px 20px;
-           border-right:1px solid rgba(255,255,255,.14)}
+.tally div{flex:1;min-width:0;display:flex;align-items:center;gap:13px;
+           padding:13px 20px;border-right:1px solid rgba(255,255,255,.14)}
 .tally div:last-child{border-right:none}
+.tally .go-in + *{border-right:none}
 .tally .v{flex:none;white-space:nowrap;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
           letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tally .v.wait{color:rgba(255,255,255,.3)}
 .tally .k{flex:1;min-width:0;font-size:13px;color:rgba(255,255,255,.62);
           line-height:1.35}
-.tally .sum{flex:1.6}
+/* призыв — четвёртой ячейкой той же полосы: итог по чужой заявке,
+   и сразу рядом кнопка проверить на своей */
+.tally .go-in{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;
+              gap:5px;border:0;cursor:pointer;text-align:left;font-family:var(--sans);
+              background:var(--rust);color:#fff;padding:15px 24px;
+              transition:background 180ms ease}
+.tally .go-in b{font:500 15.5px/1.25 var(--sans)}
+.tally .go-in i{font-style:normal;font-size:12.5px;color:rgba(255,255,255,.78)}
+@media (hover:hover) and (pointer:fine){.tally .go-in:hover{background:#B8460F}}
+.tally .go-in:active{transform:scale(.99)}
+/* в ряд, пока помещается; дальше — полосой во всю ширину под цифрами */
+@media (max-width:1150px){
+  .tally .go-in{flex:1 0 100%;flex-direction:row;align-items:baseline;gap:10px;
+                border-top:1px solid rgba(255,255,255,.18);padding:13px 20px}
+}
+@media (max-width:760px){
+  .tally .go-in{flex-direction:column;align-items:flex-start;gap:5px}
+}
+.tally .sum{flex:1.4}
 .tally .ask .v{color:var(--rust)}
 
 .cta-row{grid-column:1 / -1;display:flex;align-items:center;gap:22px;
@@ -202,10 +222,35 @@ a{color:inherit;text-decoration:none}
 .part{border-top:1px solid var(--ink);padding:52px 0 58px}
 .part > .w{max-width:980px;display:grid;grid-template-columns:60px minmax(0,1fr);
            gap:0 28px}
+.part > .w.wide{max-width:1320px}
+.part > .w.wide h2,.part > .w.wide p.t{max-width:62ch}
 .part .no{font:400 14px/1 var(--mono);color:var(--rust);padding-top:11px}
 .part h2{font:400 clamp(25px,2.9vw,34px)/1.2 var(--serif);letter-spacing:-.016em;
          margin:0 0 18px;max-width:24ch;text-wrap:balance}
 .part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);margin:0}
+
+/* 02 — цепочка: это последовательность, и стрелки её проговаривают.
+   Пяти карточкам в текстовой мере тесно: 127 пикселей на карточку —
+   это колонка из одного слова, поэтому схема выходит на полную ширину */
+.chain{display:flex;align-items:stretch;gap:10px;margin:34px 0 0;
+       width:calc(100% + 60px + 28px);margin-left:calc(-60px - 28px)}
+.chain .step{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;
+             background:#fff;border:1px solid var(--rule);padding:16px 17px 18px}
+.chain .step i{font:400 12px/1 var(--mono);font-style:normal;color:var(--ink-3);
+               letter-spacing:.08em}
+.chain .step b{font-weight:600;font-size:15.5px;line-height:1.28}
+.chain .step span{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+/* шаг, ради которого всё затевалось: система не угадывает, а спрашивает */
+.chain .step.hot{border-color:var(--rust)}
+.chain .step.hot i,.chain .step.hot b{color:var(--rust)}
+.chain .arr{flex:none;align-self:center;color:var(--rust);font-size:16px;
+            line-height:1;opacity:.75}
+@media (max-width:1120px){
+  .chain{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+         width:100%;margin-left:0}
+  .chain .arr{display:none}
+}
+@media (max-width:560px){.chain{grid-template-columns:1fr}}
 
 /* карточками, а не списком: списком это читалось как схема, а не как
    рассказ. Волосяная сетка — гэп в один пиксель на подложке */
@@ -405,16 +450,25 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   .w{padding:0 20px}
   .top-in{padding:13px 20px}
   .head{padding:40px 0 0}
-  .corr .cap{display:none}
+  /* от шапки таблицы остаётся только счётчик: подписи колонок здесь
+     не нужны, а «N из 37» — единственное, что показывает размер заявки */
+  .corr .cap{padding:6px 0 8px}
+  .corr .cap i:not(.cnt){display:none}
+  .corr .cap .cnt{flex:1;text-align:left}
   .top .meta{display:none}
   /* на узком экране строка заявки читается сверху вниз:
-     что прислали + сколько, под ней — что это оказалось */
-  .line{display:grid;grid-template-columns:1fr auto;gap:5px 12px;padding:15px 0}
-  .line .raw{grid-column:1;font-size:15.5px}
+     что прислали + сколько, под ней — что это оказалось.
+     Высота всё равно фиксированная: по ней считается шаг прокрутки */
+  :root{--rh:76px}
+  .roll{height:calc(var(--rh) * 4)}
+  .line{display:grid;grid-template-columns:1fr auto;gap:4px 12px;
+        padding:0;align-content:center}
+  .line .raw{grid-column:1;font-size:15px}
   .line .st{grid-column:2;grid-row:1;text-align:right}
-  .line .res{grid-column:1 / -1;font-size:16px}
+  .line .res{grid-column:1 / -1;font-size:15.5px}
   .tally{flex-wrap:wrap}
-  .tally div{flex:1 0 100%;border-right:none;border-bottom:1px solid var(--rule)}
+  .tally div{flex:1 0 100%;border-right:none;
+             border-bottom:1px solid rgba(255,255,255,.14)}
   .tally div:last-child{border-bottom:none}
   .part > .w{grid-template-columns:1fr}
   .part .no{padding:0 0 10px}
@@ -572,13 +626,14 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           <div class="k">строки с вопросом клиенту</div></div>
         <div><div class="v tn">3</div>
           <div class="k">позиций нет в вашем прайсе</div></div>
+        <button type="button" class="go-in" data-form>
+          <b>Проверить на своей заявке</b>
+          <i>Бесплатно, на ваших данных</i>
+        </button>
       </div>
     </div>
 
-    <div class="cta-row">
-      <button type="button" class="cta" data-form>Проверить на своей заявке</button>
-      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
-    </div>
+
   </div>
 </div>
 
@@ -628,31 +683,28 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 </div>
 
 <div class="part">
-  <div class="w">
+  <div class="w wide">
     <div class="no">02</div>
     <div>
       <h2>Как работает OMNOR</h2>
       <p class="t">Сначала мы загружаем вашу номенклатуру из 1С — артикулы,
          единицы измерения, виды цен и остатки. Дальше OMNOR работает только
          по ней и ничего не придумывает.</p>
-      <div class="work steps">
-        <div><i>Шаг 1</i><b>Читает заявку</b>
-          <span>Excel, CSV, PDF или текст письма. Находит таблицу сам, даже если
-            сверху шапка с адресом объекта, а снизу итоги.</span></div>
-        <div><i>Шаг 2</i><b>Приводит строки к одному виду</b>
-          <span>«ДУ25», «dn 25» и «д25» — одно и то же. Русская «х» и звёздочка
-            между размерами, «оц.» и «оцинкованный», запятая вместо точки в 4,2 —
-            всё это разбирается до поиска по прайсу.</span></div>
-        <div><i>Шаг 3</i><b>Сопоставляет с вашим прайсом</b>
-          <span>Для каждой строки ищет совпадения в вашей базе — по артикулу,
-            названию и размерам — и выбирает одно. Предложить то, чего у вас нет,
-            он не может.</span></div>
-        <div><i>Шаг 4</i><b>Разделяет на три стопки</b>
-          <span>Сопоставлено точно — в счёт. Подходит несколько позиций — формулирует
-            вопрос клиенту. Такого товара у вас нет — отдаёт менеджеру.</span></div>
-        <div><i>Шаг 5</i><b>Оформляет</b>
-          <span>Счёт, сделка, задачи исполнителям и письмо клиенту — что именно
-            появляется, разобрано в следующем разделе.</span></div>
+      <div class="chain">
+        <div class="step"><i>01</i><b>Читает заявку</b>
+          <span>Excel, CSV, PDF или текст письма. Таблицу в файле находит сам</span></div>
+        <span class="arr" aria-hidden="true">→</span>
+        <div class="step"><i>02</i><b>Приводит к одному виду</b>
+          <span>«ДУ25», «dn 25» и «д25» — одно и то же. Русская «х», звёздочка, запятая в 4,2</span></div>
+        <span class="arr" aria-hidden="true">→</span>
+        <div class="step"><i>03</i><b>Ищет в вашем прайсе</b>
+          <span>По артикулу, названию и размерам. Чего у вас нет — не предложит</span></div>
+        <span class="arr" aria-hidden="true">→</span>
+        <div class="step hot"><i>04</i><b>Делит на три стопки</b>
+          <span>В счёт. Вопрос клиенту. Менеджеру</span></div>
+        <span class="arr" aria-hidden="true">→</span>
+        <div class="step"><i>05</i><b>Оформляет</b>
+          <span>Счёт, сделка, задачи исполнителям и письмо клиенту</span></div>
       </div>
     </div>
   </div>
@@ -970,7 +1022,12 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         // на быстрой фазе лента должна поспевать за строками: с полусекундным
         // ходом она отставала на несколько строк и показывала не то, что сейчас
         strip.style.transitionDuration = i < SLOW ? '.45s' : '.13s';
-        strip.style.transform = 'translateY(' + (-Math.max(0, i - 4) * rh()) + 'px)';
+        // не дальше, чем есть строки: иначе внизу повисает пустой слот
+        const fit = Math.max(1, Math.round(
+          document.querySelector('.roll').getBoundingClientRect().height / rh()));
+        const last = Math.max(0, lines.length - fit);
+        strip.style.transform =
+          'translateY(' + (-Math.min(Math.max(0, i - (fit - 2)), last) * rh()) + 'px)';
         await nap(i < SLOW ? 300 : 108);
       }
 
