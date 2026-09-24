@@ -207,11 +207,27 @@ a{color:inherit;text-decoration:none}
          margin:0 0 18px;max-width:24ch;text-wrap:balance}
 .part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);margin:0}
 
-.work{margin:28px 0 0;border-top:1px solid var(--rule)}
-.work > div{display:grid;grid-template-columns:210px minmax(0,1fr);gap:30px;
-            padding:22px 0;border-bottom:1px solid var(--rule)}
-.work b{font-weight:600;font-size:16.5px}
-.work span{color:var(--ink-2);font-size:16px;line-height:1.6}
+/* карточками, а не списком: списком это читалось как схема, а не как
+   рассказ. Волосяная сетка — гэп в один пиксель на подложке */
+.work{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;
+      margin:30px 0 0;background:var(--rule);
+      border:1px solid var(--rule)}
+.work > div{grid-column:span 2;display:flex;flex-direction:column;gap:10px;
+            padding:24px 26px 26px;background:#FBFBFA}
+/* в пятишаговом разделе две последние карточки делят строку пополам */
+.work.steps > div:nth-child(n+4){grid-column:span 3}
+.work i{font:400 12.5px/1 var(--mono);font-style:normal;color:var(--rust);
+        letter-spacing:.06em}
+.work b{font-weight:600;font-size:16.5px;line-height:1.3}
+.work span{color:var(--ink-2);font-size:15.5px;line-height:1.56}
+@media (max-width:920px){
+  .work,.work.steps{grid-template-columns:repeat(2,1fr)}
+  .work > div,.work.steps > div:nth-child(n+4){grid-column:span 1}
+}
+@media (max-width:620px){
+  .work,.work.steps{grid-template-columns:1fr}
+  .work > div{padding:20px 20px 22px}
+}
 
 .routine{margin:26px 0 0;padding:0;list-style:none}
 .routine li{padding:13px 0 13px 0;border-bottom:1px solid var(--rule-2);
@@ -602,22 +618,22 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <p class="t">Сначала мы загружаем вашу номенклатуру из 1С — артикулы,
          единицы измерения, виды цен и остатки. Дальше OMNOR работает только
          по ней и ничего не придумывает.</p>
-      <div class="work">
-        <div><b>Читает заявку</b>
+      <div class="work steps">
+        <div><i>Шаг 1</i><b>Читает заявку</b>
           <span>Excel, CSV, PDF или текст письма. Находит таблицу сам, даже если
             сверху шапка с адресом объекта, а снизу итоги.</span></div>
-        <div><b>Приводит строки к одному виду</b>
+        <div><i>Шаг 2</i><b>Приводит строки к одному виду</b>
           <span>«ДУ25», «dn 25» и «д25» — одно и то же. Русская «х» и звёздочка
             между размерами, «оц.» и «оцинкованный», запятая вместо точки в 4,2 —
             всё это разбирается до поиска по прайсу.</span></div>
-        <div><b>Сопоставляет с вашим прайсом</b>
+        <div><i>Шаг 3</i><b>Сопоставляет с вашим прайсом</b>
           <span>Для каждой строки ищет совпадения в вашей базе — по артикулу,
             названию и размерам — и выбирает одно. Предложить то, чего у вас нет,
             он не может.</span></div>
-        <div><b>Разделяет на три стопки</b>
+        <div><i>Шаг 4</i><b>Разделяет на три стопки</b>
           <span>Сопоставлено точно — в счёт. Подходит несколько позиций — формулирует
             вопрос клиенту. Такого товара у вас нет — отдаёт менеджеру.</span></div>
-        <div><b>Оформляет</b>
+        <div><i>Шаг 5</i><b>Оформляет</b>
           <span>Счёт, сделка, задачи исполнителям и письмо клиенту — что именно
             появляется, разобрано в следующем разделе.</span></div>
       </div>
