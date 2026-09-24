@@ -64,7 +64,7 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ── шапка документа ── */
-.head{padding:64px 0 0}
+.head{padding:44px 0 0}
 .head > .w{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
            gap:0 56px;align-items:end}
 .head h1{grid-column:1;font:400 clamp(31px,3.7vw,54px)/1.1 var(--serif);
@@ -74,23 +74,48 @@ a{color:inherit;text-decoration:none}
 
 /* ── соответствие: главный приём ── */
 /* ── видео на первом экране ── */
-.vsl{grid-column:1 / -1;margin:40px 0 0;position:relative;background:#0E0F12;
-     border:1px solid var(--rule);aspect-ratio:16/9;max-height:min(62vh,640px)}
-.vsl video{display:block;width:100%;height:100%;object-fit:contain;background:#0E0F12}
-.vsl .shot{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
-           background:#0E0F12}
-.vsl .go{position:absolute;inset:0;display:flex;flex-direction:column;
-         align-items:center;justify-content:center;gap:14px;cursor:pointer;
-         border:0;background:rgba(10,11,13,.32);color:#fff;font-family:var(--sans);
-         transition:background 200ms ease}
-.vsl .go:after{content:"";width:0;height:0;border-style:solid;
-               border-width:17px 0 17px 28px;border-color:transparent transparent
-               transparent #fff;margin-left:6px;order:-1}
-.vsl .go b{font:500 17px/1.3 var(--sans)}
-.vsl .go span{font-size:14px;color:rgba(255,255,255,.72)}
-@media (hover:hover) and (pointer:fine){.vsl .go:hover{background:rgba(10,11,13,.18)}}
+/* по ширине колонки, без ограничения высоты: ограничение высоты при
+   заданных пропорциях ужимало ширину и оставляло мёртвую полосу справа */
+.vsl{grid-column:1 / -1;margin:34px 0 0;position:relative;
+     aspect-ratio:16/9;background:#0E0F12;border:1px solid var(--rule)}
+.vsl video,.vsl .shot{display:block;position:absolute;inset:0;
+                      width:100%;height:100%;object-fit:cover}
+.vsl .go{position:absolute;inset:0;width:100%;cursor:pointer;border:0;padding:0;
+         display:block;text-align:left;font-family:var(--sans);color:#fff;
+         background:rgba(10,11,13,.30)}
+.vsl .go .disc{position:absolute;left:50%;top:50%;translate:-50% -50%;
+               width:78px;height:78px;border-radius:50%;background:var(--rust);
+               display:flex;align-items:center;justify-content:center;
+               box-shadow:0 8px 30px rgba(10,11,13,.4);
+               transition:background 180ms ease,scale 220ms var(--out)}
+.vsl .go .disc svg{margin-left:4px}
+/* подпись под кнопкой, а не у нижнего края: низ видео уходит за сгиб.
+   Своя подложка — под ней постер с собственным текстом */
+.vsl .go .cap2{position:absolute;left:50%;top:50%;translate:-50% 0;
+               margin-top:58px;padding:9px 18px;white-space:nowrap;
+               background:rgba(10,11,13,.72);border-radius:2px;
+               -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.vsl .go b{font:500 16.5px/1.3 var(--sans)}
+.vsl .go i{font-style:normal;font-size:15px;color:rgba(255,255,255,.7)}
+.vsl .go i:before{content:" · "}
+.vsl .go i em{font-style:normal}
+/* на телефоне видео всего ~190px высотой: подпись в две строки
+   вылезала за нижний край, поэтому ужимаем её в одну */
+@media (max-width:620px){
+  .vsl .go .cap2{margin-top:34px;padding:7px 12px}
+  .vsl .go b{font-size:12.5px}
+  .vsl .go i{font-size:12px}
+  .vsl .go i em{display:none}
+}
+@media (hover:hover) and (pointer:fine){
+  .vsl .go:hover .disc{background:#B8460F;scale:1.06}
+}
+.vsl .go:active .disc{scale:.97}
 .vsl.on .shot,.vsl.on .go{display:none}
-@media (max-width:760px){.vsl{margin-top:30px;max-height:none}}
+@media (max-width:760px){
+  .vsl{margin-top:26px}
+  .vsl .go .disc{width:62px;height:62px}
+}
 
 .corr{grid-column:1 / -1;margin:56px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;gap:20px;padding:12px 0;
@@ -351,9 +376,13 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
       <video id="vid" controls preload="none" playsinline
              poster="video/poster.jpg" src="video/omnor.mp4"></video>
       <img class="shot" src="video/poster.jpg" alt="" aria-hidden="true">
-      <button type="button" class="go" id="play">
-        <b>Посмотреть, как это работает</b>
-        <span>4 минуты, с моими комментариями</span>
+      <button type="button" class="go" id="play" aria-label="Смотреть видео">
+        <span class="disc"><svg width="26" height="30" viewBox="0 0 26 30"
+          aria-hidden="true"><path d="M0 0l26 15L0 30z" fill="#fff"/></svg></span>
+        <span class="cap2">
+          <b>Посмотреть, как это работает</b>
+          <i>4 минуты<em>, с моими комментариями</em></i>
+        </span>
       </button>
     </div>
 
