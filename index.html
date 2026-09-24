@@ -64,7 +64,7 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ── шапка документа ── */
-.head{padding:26px 0 0}
+.head{padding:26px 0 56px}
 .head > .w{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
            gap:0 56px;align-items:end}
 .head h1{grid-column:1;font:400 clamp(31px,3.7vw,54px)/1.1 var(--serif);
@@ -81,9 +81,15 @@ a{color:inherit;text-decoration:none}
    margin auto — чтобы остаток лёг воздухом с двух сторон, а не полосой
    справа: именно односторонняя полоса и читалась как дыра.
    --vsl-top ставит скрипт по фактическому отступу сверху */
-.vsl{grid-column:1 / -1;margin:24px auto 0;position:relative;
-     aspect-ratio:16/9;background:#0E0F12;border:1px solid var(--rule);
-     width:min(100%, calc((100dvh - var(--vsl-top, 400px) - 18px) * 16 / 9))}
+/* видео на своём экране: ширина — меньшее из двух, ширина колонки и то,
+   что влезает по высоте. Пропорции жёсткие, поэтому кадр не режется,
+   а уменьшается целиком; остаток ложится воздухом с двух сторон */
+.vsl-part{padding:64px 0 72px;background:#FBFBFA;
+          border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.vsl{margin:0 auto;position:relative;aspect-ratio:16/9;
+     background:#0E0F12;border:1px solid var(--rule);
+     width:min(100%, calc((100dvh - 190px) * 16 / 9))}
+@media (max-width:760px){.vsl-part{padding:40px 0 44px}}
 .vsl video,.vsl .shot{display:block;position:absolute;inset:0;
                       width:100%;height:100%;object-fit:cover}
 .vsl .go{position:absolute;inset:0;width:100%;cursor:pointer;border:0;padding:0;
@@ -119,11 +125,10 @@ a{color:inherit;text-decoration:none}
 .vsl .go:active .disc{scale:.97}
 .vsl.on .shot,.vsl.on .go{display:none}
 @media (max-width:760px){
-  .vsl{margin-top:20px}
   .vsl .go .disc{width:62px;height:62px}
 }
 
-.corr{grid-column:1 / -1;margin:56px 0 0;border-top:1px solid var(--ink)}
+.corr{grid-column:1 / -1;margin:34px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;gap:20px;padding:12px 0;
            border-bottom:1px solid var(--rule);
            font:500 14.5px/1.3 var(--sans);color:var(--ink);
@@ -131,32 +136,17 @@ a{color:inherit;text-decoration:none}
 .corr .cap i{font-style:normal;flex:0 0 38%}
 .corr .cap i:first-child{color:var(--ink-3)}
 
-/* строка заявки печатается здесь, потом падает в таблицу сопоставленной */
-.feed{display:flex;align-items:center;gap:18px;padding:16px 0 18px;
-      border-bottom:1px solid var(--rule-2)}
-.feed .lab{flex:0 0 auto;font:500 12px/1 var(--sans);letter-spacing:.09em;
-           text-transform:uppercase;color:var(--ink-3)}
-.feed .box{flex:1;min-width:0;border:1px dashed var(--rule);background:#FBFBFA;
-           padding:13px 16px;font:400 17.5px/1.4 var(--mono);
-           letter-spacing:-.02em;color:var(--ink);min-height:50px;
-           white-space:nowrap;overflow:hidden}
-.feed .car{display:inline-block;width:9px;height:1.05em;background:var(--rust);
-           margin-left:1px;vertical-align:-3px;animation:car 1s steps(1) infinite}
+/* курсор в правой колонке, пока она допечатывается */
+.res .car{display:inline-block;width:8px;height:1.02em;background:var(--rust);
+          margin-left:2px;vertical-align:-2px;animation:car 1s steps(1) infinite}
 @keyframes car{0%,50%{opacity:1}50.01%,100%{opacity:0}}
-@media (max-width:620px){
-  .feed{flex-direction:column;align-items:stretch;gap:9px}
-  .feed .box{font-size:15px;padding:11px 13px;min-height:44px}
-}
 .line{display:flex;align-items:baseline;gap:20px;padding:17px 0;
-      border-bottom:1px solid var(--rule-2);
-      opacity:0;transform:translateY(-7px);
-      transition:opacity .34s var(--out),transform .34s var(--out)}
-.line.on{opacity:1;transform:none}
+      border-bottom:1px solid var(--rule-2)}
 .line .raw{flex:0 0 38%;font:400 17.5px/1.4 var(--mono);color:var(--ink-3);
            letter-spacing:-.02em}
-.line .res{flex:1;font-size:18px;line-height:1.4;opacity:0;transform:translateX(-6px);
-           transition:opacity .5s var(--out),transform .5s var(--out)}
-.line.done .res{opacity:1;transform:none}
+/* минимальная высота — чтобы пустая строка не схлопывалась и таблица
+   не дёргалась, пока колонка допечатывается */
+.line .res{flex:1;font-size:18px;line-height:1.4;min-height:1.4em}
 .line .res b{font-weight:500}
 .line .res .q{color:var(--rust)}
 .line .res .x{color:var(--ink-3)}
@@ -178,7 +168,7 @@ a{color:inherit;text-decoration:none}
 .tally .ask .v{color:var(--rust)}
 
 .cta-row{grid-column:1 / -1;display:flex;align-items:center;gap:22px;
-         flex-wrap:wrap;margin:38px 0 72px}
+         flex-wrap:wrap;margin:36px 0 0}
 .cta{display:inline-block;background:var(--rust);color:#fff;
      font:500 16.5px/1 var(--sans);padding:17px 30px;border-radius:2px;
      transition:background 180ms ease,transform 150ms var(--out)}
@@ -398,31 +388,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
        с вашей номенклатурой, выставляет счёт в 1С, заводит сделку в CRM
        и ставит задачу логисту.</p>
 
-    <div class="vsl" id="vsl">
-      <video id="vid" controls preload="none" playsinline
-             poster="video/poster.jpg" src="video/omnor.mp4"></video>
-      <img class="shot" src="video/poster.jpg" alt="" aria-hidden="true">
-      <button type="button" class="go" id="play" aria-label="Смотреть видео">
-        <span class="disc"><svg width="26" height="30" viewBox="0 0 26 30"
-          aria-hidden="true"><path d="M0 0l26 15L0 30z" fill="#fff"/></svg></span>
-        <span class="cap2">
-          <b>Посмотреть, как это работает</b>
-          <i>4 минуты<em>, с моими комментариями</em></i>
-        </span>
-      </button>
-    </div>
-
-    <div class="cta-row">
-      <button type="button" class="cta" data-form>Проверить на своей заявке</button>
-      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
-    </div>
-
     <div class="corr" id="corr">
-      <div class="feed">
-        <span class="lab">Заявка клиента</span>
-        <div class="box"><span id="typed"></span><i class="car" aria-hidden="true"></i></div>
-      </div>
-
       <div class="cap"><i>Как написал снабженец</i><i>Что это в вашей номенклатуре</i></div>
 
       <div class="line"><span class="raw">Болт М10х80 ДИН933 оц.</span>
@@ -453,6 +419,29 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         <div><div class="v tn">3</div>
           <div class="k">позиции, которых нет в вашем прайсе</div></div>
       </div>
+    </div>
+
+    <div class="cta-row">
+      <button type="button" class="cta" data-form>Проверить на своей заявке</button>
+      <span class="fine">Пришлите одну обезличенную заявку и прайс — вернём разбор и счёт</span>
+    </div>
+  </div>
+</div>
+
+<div class="vsl-part">
+  <div class="w">
+    <div class="vsl" id="vsl">
+      <video id="vid" controls preload="none" playsinline
+             poster="video/poster.jpg" src="video/omnor.mp4"></video>
+      <img class="shot" src="video/poster.jpg" alt="" aria-hidden="true">
+      <button type="button" class="go" id="play" aria-label="Смотреть видео">
+        <span class="disc"><svg width="26" height="30" viewBox="0 0 26 30"
+          aria-hidden="true"><path d="M0 0l26 15L0 30z" fill="#fff"/></svg></span>
+        <span class="cap2">
+          <b>Посмотреть, как это работает</b>
+          <i>4 минуты<em>, с моими комментариями</em></i>
+        </span>
+      </button>
     </div>
 
   </div>
@@ -673,17 +662,6 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   const box = document.getElementById('vsl');
   const vid = document.getElementById('vid');
 
-  // сколько места над видео занято шапкой и текстом — от этого зависит,
-  // насколько его ужать, чтобы влезло целиком
-  const fit = () => {
-    box.style.removeProperty('--vsl-top');
-    const top = box.getBoundingClientRect().top + window.scrollY;
-    box.style.setProperty('--vsl-top', Math.round(top) + 'px');
-  };
-  fit();
-  addEventListener('resize', fit);
-  addEventListener('load', fit);
-
   document.getElementById('play').addEventListener('click', () => {
     box.classList.add('on');
     vid.preload = 'auto';
@@ -691,19 +669,28 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   });
 })();
 
-// Таблица собирается на глазах: строка заявки печатается в поле сверху,
-// потом падает вниз уже сопоставленной. Крутится, пока блок на экране;
-// ушли со страницы — цикл встал, процессор не греется.
+// Таблица собирается на глазах: слева уже написано, как прислал снабженец,
+// справа OMNOR допечатывает, что это в номенклатуре. Крутится, пока блок
+// на экране; ушли со страницы — цикл встал, процессор не греется.
 (function () {
   const corr  = document.getElementById('corr');
-  const typed = document.getElementById('typed');
   const tally = document.getElementById('tally');
   const lines = [...document.querySelectorAll('.line')];
-  const raws  = lines.map(l => l.querySelector('.raw').textContent.trim());
+
+  // запоминаем итоговую разметку: в ней жирный текст, рыжий вопрос и серое
+  // «нет в прайсе» — печатаем простым текстом, в конце возвращаем как было
+  const cells = lines.map(l => {
+    const res = l.querySelector('.res');
+    const kid = res.firstElementChild;
+    return {
+      res, html: res.innerHTML, text: res.textContent.trim(),
+      tag: kid ? kid.tagName.toLowerCase() : 'span',
+      cls: kid ? kid.className : ''
+    };
+  });
 
   const showAll = () => {
-    typed.textContent = '';
-    lines.forEach(l => l.classList.add('on', 'done'));
+    cells.forEach((c, i) => { c.res.innerHTML = c.html; lines[i].classList.add('done'); });
     tally.classList.add('on');
   };
 
@@ -712,32 +699,31 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 
   let alive = false, token = 0;
   const nap = ms => new Promise(r => setTimeout(r, ms));
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
   async function cycle(my) {
     while (alive && my === token) {
-      typed.textContent = '';
-      lines.forEach(l => l.classList.remove('on', 'done'));
+      cells.forEach((c, i) => { c.res.innerHTML = ''; lines[i].classList.remove('done'); });
       tally.classList.remove('on');
-      await nap(420);
+      await nap(500);
 
-      for (let i = 0; i < lines.length; i++) {
-        const s = raws[i];
-        for (let c = 1; c <= s.length; c++) {
+      for (let i = 0; i < cells.length; i++) {
+        const c = cells[i];
+        for (let n = 1; n <= c.text.length; n++) {
           if (!alive || my !== token) return;
-          typed.textContent = s.slice(0, c);
-          // паузы в наборе чуть разной длины — ровный ритм читается машинно
-          await nap(26 + Math.random() * 26);
+          c.res.innerHTML = '<' + c.tag + ' class="' + c.cls + '">' +
+                            esc(c.text.slice(0, n)) +
+                            '</' + c.tag + '><i class="car"></i>';
+          // паузы разной длины: ровный ритм читается машинно
+          await nap(16 + Math.random() * 20);
         }
-        await nap(300);
         if (!alive || my !== token) return;
-        typed.textContent = '';
-        lines[i].classList.add('on');
-        await nap(260);
+        c.res.innerHTML = c.html;
         lines[i].classList.add('done');
-        await nap(220);
+        await nap(330);
       }
       tally.classList.add('on');
-      await nap(3400);
+      await nap(3600);
     }
   }
 
