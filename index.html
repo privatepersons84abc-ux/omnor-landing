@@ -64,7 +64,7 @@ a{color:inherit;text-decoration:none}
 }
 
 /* ── шапка документа ── */
-.head{padding:44px 0 0}
+.head{padding:26px 0 0}
 .head > .w{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
            gap:0 56px;align-items:end}
 .head h1{grid-column:1;font:400 clamp(31px,3.7vw,54px)/1.1 var(--serif);
@@ -76,8 +76,14 @@ a{color:inherit;text-decoration:none}
 /* ── видео на первом экране ── */
 /* по ширине колонки, без ограничения высоты: ограничение высоты при
    заданных пропорциях ужимало ширину и оставляло мёртвую полосу справа */
-.vsl{grid-column:1 / -1;margin:34px 0 0;position:relative;
-     aspect-ratio:16/9;background:#0E0F12;border:1px solid var(--rule)}
+/* ширина — меньшее из двух: ширина колонки и то, что влезает по высоте.
+   Пропорции заданы жёстко, поэтому кадр не режется, а уменьшается целиком.
+   margin auto — чтобы остаток лёг воздухом с двух сторон, а не полосой
+   справа: именно односторонняя полоса и читалась как дыра.
+   --vsl-top ставит скрипт по фактическому отступу сверху */
+.vsl{grid-column:1 / -1;margin:24px auto 0;position:relative;
+     aspect-ratio:16/9;background:#0E0F12;border:1px solid var(--rule);
+     width:min(100%, calc((100dvh - var(--vsl-top, 400px) - 18px) * 16 / 9))}
 .vsl video,.vsl .shot{display:block;position:absolute;inset:0;
                       width:100%;height:100%;object-fit:cover}
 .vsl .go{position:absolute;inset:0;width:100%;cursor:pointer;border:0;padding:0;
@@ -113,7 +119,7 @@ a{color:inherit;text-decoration:none}
 .vsl .go:active .disc{scale:.97}
 .vsl.on .shot,.vsl.on .go{display:none}
 @media (max-width:760px){
-  .vsl{margin-top:26px}
+  .vsl{margin-top:20px}
   .vsl .go .disc{width:62px;height:62px}
 }
 
@@ -641,6 +647,18 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 (function () {
   const box = document.getElementById('vsl');
   const vid = document.getElementById('vid');
+
+  // сколько места над видео занято шапкой и текстом — от этого зависит,
+  // насколько его ужать, чтобы влезло целиком
+  const fit = () => {
+    box.style.removeProperty('--vsl-top');
+    const top = box.getBoundingClientRect().top + window.scrollY;
+    box.style.setProperty('--vsl-top', Math.round(top) + 'px');
+  };
+  fit();
+  addEventListener('resize', fit);
+  addEventListener('load', fit);
+
   document.getElementById('play').addEventListener('click', () => {
     box.classList.add('on');
     vid.preload = 'auto';
