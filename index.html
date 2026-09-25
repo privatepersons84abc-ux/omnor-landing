@@ -48,7 +48,7 @@ a{color:inherit;text-decoration:none}
 .top .sp{flex:1}
 .top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
 .cta-top{flex:none;background:var(--rust);color:#fff;border:0;cursor:pointer;
-         font:500 14.5px/1 var(--sans);padding:12px 20px;border-radius:2px;
+         font:500 15px/1 var(--sans);padding:12px 20px;border-radius:8px;
          transition:background 180ms ease,transform 150ms var(--out)}
 .cta-top:active{transform:scale(.97)}
 @media (hover:hover) and (pointer:fine){.cta-top:hover{background:#B8460F}}
@@ -128,7 +128,7 @@ a{color:inherit;text-decoration:none}
   .vsl .go .disc{width:62px;height:62px}
 }
 
-.corr{grid-column:1 / -1;margin:16px 0 0;border-top:1px solid var(--ink)}
+.corr{grid-column:1 / -1;margin:12px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;gap:20px;padding:9px 0;
            border-bottom:1px solid var(--rule);
            font:500 14.5px/1.3 var(--sans);color:var(--ink);
@@ -175,12 +175,12 @@ a{color:inherit;text-decoration:none}
 /* блок стоит на месте всегда: раньше он целиком появлялся и исчезал
    на каждом круге, и это дёргало страницу. Пока таблица набирается,
    вместо чисел стоят прочерки */
-.tally{display:flex;flex-wrap:wrap;gap:0;margin-top:18px;
+.tally{display:flex;flex-wrap:wrap;gap:0;margin-top:14px;
        background:var(--ink);color:#fff}
 /* число и подпись в строку, а не друг под другом: так блок втрое ниже
    и помещается на первый экран вместе с таблицей */
 .tally div{flex:1;min-width:0;display:flex;align-items:center;gap:13px;
-           padding:13px 20px;border-right:1px solid rgba(255,255,255,.14)}
+           padding:12px 20px;border-right:1px solid rgba(255,255,255,.14)}
 .tally div:last-child{border-right:none}
 .tally .go-in + *{border-right:none}
 .tally .v{flex:none;white-space:nowrap;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
@@ -195,17 +195,18 @@ a{color:inherit;text-decoration:none}
 /* призыв — четвёртой ячейкой той же полосы: итог по чужой заявке,
    и сразу рядом кнопка проверить на своей */
 .tally .go-in{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;
-              gap:5px;border:0;cursor:pointer;text-align:left;font-family:var(--sans);
-              background:var(--rust);color:#fff;padding:15px 24px;
-              transition:background 180ms ease}
-.tally .go-in b{font:500 15.5px/1.25 var(--sans)}
-.tally .go-in i{font-style:normal;font-size:12.5px;color:rgba(255,255,255,.78)}
+              gap:4px;border:0;cursor:pointer;text-align:left;font-family:var(--sans);
+              background:var(--rust);color:#fff;padding:14px 24px;
+              margin:11px 11px 11px 0;border-radius:8px;
+              transition:background 180ms ease,transform 150ms var(--out)}
+.tally .go-in b{font:500 17px/1.25 var(--sans)}
+.tally .go-in i{font-style:normal;font-size:13px;color:rgba(255,255,255,.8)}
 @media (hover:hover) and (pointer:fine){.tally .go-in:hover{background:#B8460F}}
-.tally .go-in:active{transform:scale(.99)}
+.tally .go-in:active{transform:scale(.985)}
 /* в ряд, пока помещается; дальше — полосой во всю ширину под цифрами */
 @media (max-width:1150px){
   .tally .go-in{flex:1 0 100%;flex-direction:row;align-items:baseline;gap:10px;
-                border-top:1px solid rgba(255,255,255,.18);padding:13px 20px}
+                margin:0 13px 13px;padding:14px 20px;justify-content:center}
 }
 @media (max-width:760px){
   .tally .go-in{flex-direction:column;align-items:flex-start;gap:5px}
@@ -216,7 +217,7 @@ a{color:inherit;text-decoration:none}
 .cta-row{grid-column:1 / -1;display:flex;align-items:center;gap:22px;
          flex-wrap:wrap;margin:26px 0 0}
 .cta{display:inline-block;background:var(--rust);color:#fff;
-     font:500 16.5px/1 var(--sans);padding:17px 30px;border-radius:2px;
+     font:500 17px/1 var(--sans);padding:17px 30px;border-radius:8px;
      transition:background 180ms ease,transform 150ms var(--out)}
 .cta:active{transform:scale(.978)}
 @media (hover:hover) and (pointer:fine){.cta:hover{background:#B8460F}}
@@ -346,7 +347,7 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 .modal-head h3{margin:0;font:400 22px/1.25 var(--serif);letter-spacing:-.018em}
 .modal-head .sub{margin:6px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink-3)}
 .modal-x{margin-left:auto;flex:none;width:34px;height:34px;padding:0;cursor:pointer;
-         background:transparent;border:1px solid var(--rule);border-radius:2px;
+         background:transparent;border:1px solid var(--rule);border-radius:8px;
          color:var(--ink-2);font:400 19px/1 var(--sans);
          transition:background 160ms ease,border-color 160ms ease}
 @media (hover:hover) and (pointer:fine){
