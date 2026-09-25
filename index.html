@@ -61,10 +61,17 @@ a{color:inherit;text-decoration:none}
 .top .sp{flex:1}
 .top .meta{font:400 13.5px/1 var(--sans);color:var(--ink-3)}
 .cta-top{flex:none;background:var(--rust);color:#fff;border:0;cursor:pointer;
-         font:500 15px/1 var(--sans);padding:12px 20px;border-radius:8px;
-         transition:background 180ms ease,transform 150ms var(--out)}
-.cta-top:active{transform:scale(.97)}
-@media (hover:hover) and (pointer:fine){.cta-top:hover{background:#B8460F}}
+         font:600 15px/1 var(--sans);padding:12px 20px;border-radius:8px;
+         box-shadow:inset 0 1px 0 rgba(255,255,255,.22),
+                    0 3px 10px rgba(160,60,18,.24);
+         transition:box-shadow 200ms ease,transform 160ms var(--out),
+                    filter 180ms ease}
+.cta-top:active{transform:translateY(1px) scale(.985)}
+@media (hover:hover) and (pointer:fine){
+  .cta-top:hover{filter:brightness(1.06);transform:translateY(-1px);
+                 box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+                            0 6px 16px rgba(160,60,18,.3)}
+}
 /* рядом с кнопкой подпись не помещается — на узком экране прячем её:
    то же самое написано крупно на первом экране */
 @media (max-width:900px){.top .meta{display:none}}
@@ -141,7 +148,7 @@ a{color:inherit;text-decoration:none}
   .vsl .go .disc{width:62px;height:62px}
 }
 
-.corr{grid-column:1 / -1;margin:12px 0 0;border-top:1px solid var(--ink)}
+.corr{grid-column:1 / -1;margin:10px 0 0;border-top:1px solid var(--ink)}
 .corr .cap{display:flex;gap:20px;padding:9px 0;
            border-bottom:1px solid var(--rule);
            font:500 14.5px/1.3 var(--sans);color:var(--ink);
@@ -188,7 +195,7 @@ a{color:inherit;text-decoration:none}
 /* блок стоит на месте всегда: раньше он целиком появлялся и исчезал
    на каждом круге, и это дёргало страницу. Пока таблица набирается,
    вместо чисел стоят прочерки */
-.tally{display:flex;flex-wrap:wrap;gap:0;margin-top:14px;
+.tally{display:flex;flex-wrap:wrap;gap:0;margin-top:12px;
        background:var(--ink);color:#fff}
 /* число и подпись в строку, а не друг под другом: так блок втрое ниже
    и помещается на первый экран вместе с таблицей */
@@ -207,33 +214,47 @@ a{color:inherit;text-decoration:none}
              margin-top:4px}
 /* призыв — четвёртой ячейкой той же полосы: итог по чужой заявке,
    и сразу рядом кнопка проверить на своей */
-.tally .go-in{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;
-              gap:4px;border:0;cursor:pointer;text-align:left;font-family:var(--sans);
-              background:var(--rust);color:#fff;padding:14px 24px;
-              margin:11px 11px 11px 0;border-radius:8px;
-              transition:background 180ms ease,transform 150ms var(--out)}
-.tally .go-in b{font:500 17px/1.25 var(--sans)}
-.tally .go-in i{font-style:normal;font-size:13px;color:rgba(255,255,255,.8)}
-@media (hover:hover) and (pointer:fine){.tally .go-in:hover{background:#B8460F}}
-.tally .go-in:active{transform:scale(.985)}
+/* на тёмном обычная тень не читается — чёрное на чёрном. Объём даёт
+   градиент, светлая кромка сверху и подсветка собственным цветом */
+.tally .go-in{flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+              border:0;cursor:pointer;font:600 17.5px/1.2 var(--sans);
+              letter-spacing:-.005em;color:#fff;
+              background:linear-gradient(180deg,#E06124 0%,var(--rust) 55%,#C44A14 100%);
+              box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+                         0 6px 18px rgba(214,84,28,.34);
+              padding:0 26px;margin:11px 11px 11px 0;border-radius:8px;
+              transition:box-shadow 200ms ease,transform 160ms var(--out),
+                         filter 180ms ease}
+@media (hover:hover) and (pointer:fine){
+  .tally .go-in:hover{filter:brightness(1.06);transform:translateY(-1px);
+                      box-shadow:inset 0 1px 0 rgba(255,255,255,.3),
+                                 0 10px 24px rgba(214,84,28,.42)}
+}
+.tally .go-in:active{transform:translateY(1px) scale(.994);
+                     box-shadow:inset 0 1px 0 rgba(255,255,255,.18),
+                                0 3px 10px rgba(214,84,28,.3)}
 /* в ряд, пока помещается; дальше — полосой во всю ширину под цифрами */
 @media (max-width:1150px){
-  .tally .go-in{flex:1 0 100%;flex-direction:row;align-items:baseline;gap:10px;
-                margin:0 13px 13px;padding:14px 20px;justify-content:center}
+  .tally .go-in{flex:1 0 100%;margin:0 11px 11px;padding:15px 20px}
 }
-@media (max-width:760px){
-  .tally .go-in{flex-direction:column;align-items:flex-start;gap:5px}
-}
+
 .tally .sum{flex:1.5}
 .tally .ask .v{color:var(--rust)}
 
 .cta-row{grid-column:1 / -1;display:flex;align-items:center;gap:22px;
          flex-wrap:wrap;margin:26px 0 0}
 .cta{display:inline-block;background:var(--rust);color:#fff;
-     font:500 17px/1 var(--sans);padding:17px 30px;border-radius:8px;
-     transition:background 180ms ease,transform 150ms var(--out)}
-.cta:active{transform:scale(.978)}
-@media (hover:hover) and (pointer:fine){.cta:hover{background:#B8460F}}
+     font:600 17px/1 var(--sans);padding:17px 30px;border-radius:8px;
+     box-shadow:inset 0 1px 0 rgba(255,255,255,.22),
+                0 4px 12px rgba(160,60,18,.26);
+     transition:box-shadow 200ms ease,transform 160ms var(--out),
+                filter 180ms ease}
+.cta:active{transform:translateY(1px) scale(.99)}
+@media (hover:hover) and (pointer:fine){
+  .cta:hover{filter:brightness(1.06);transform:translateY(-1px);
+             box-shadow:inset 0 1px 0 rgba(255,255,255,.26),
+                        0 8px 20px rgba(160,60,18,.32)}
+}
 .cta-row .fine{font-size:14.5px;color:var(--ink-3);max-width:36ch;line-height:1.5}
 
 /* ── разделы документа ── */
@@ -656,10 +677,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
           <div class="k">строки с вопросом клиенту</div></div>
         <div><div class="v tn">3</div>
           <div class="k">позиций нет в вашем прайсе</div></div>
-        <button type="button" class="go-in" data-form>
-          <b>Проверить на своей заявке</b>
-          <i>Бесплатно, на ваших данных</i>
-        </button>
+        <button type="button" class="go-in" data-form>Проверить на своей заявке</button>
       </div>
     </div>
 
