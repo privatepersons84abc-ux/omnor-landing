@@ -8,6 +8,20 @@
 <meta property="og:description" content="Excel на 37 позиций. 32 строки в счёт, 2 вопроса клиенту, 3 позиции не из вашего прайса. Четыре секунды.">
 <meta name="theme-color" content="#F3F3F1">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 80'%3E%3Cg transform='rotate(-48 42 40)'%3E%3Ccircle cx='42' cy='40' r='26' fill='none' stroke='%23D6541C' stroke-width='11' stroke-linecap='round' stroke-dasharray='142.46 20.9'/%3E%3C/g%3E%3Ccircle cx='42' cy='40' r='8.5' fill='%23D6541C'/%3E%3C/svg%3E">
+<!-- Яндекс.Метрика -->
+<script>
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+m[i].l=1*new Date();
+for (var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r){return;}}
+k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,
+a.parentNode.insertBefore(k,a)})
+(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+ym(113050474,'init',{ssr:true,webvisor:true,clickmap:true,
+  accurateTrackBounce:true,trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113050474" style="position:absolute;left:-9999px" alt=""></div></noscript>
+<!-- /Яндекс.Метрика -->
+
 <style>
 :root{
   --paper:#F3F3F1; --paper-2:#EAEAE6; --ink:#17181B; --ink-2:#4A4D53; --ink-3:#7C8087;
@@ -932,6 +946,10 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 </div>
 
 <script>
+// Цели Метрики. Помощник молчит, если счётчик не поднялся, —
+// аналитика не должна ронять страницу.
+const goal = n => { try { if (window.ym) ym(113050474, 'reachGoal', n); } catch (e) {} };
+
 // Видео первого экрана грузится только по нажатию: 30 МБ не должны
 // тянуться у каждого, кто просто открыл страницу.
 (function () {
@@ -942,6 +960,20 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
     box.classList.add('on');
     vid.preload = 'auto';
     vid.play();
+    goal('video_play');
+  });
+
+  // до какой доли досмотрели: каждый рубеж считаем один раз
+  const marks = [25, 50, 75, 100], hit = new Set();
+  vid.addEventListener('timeupdate', () => {
+    if (!vid.duration) return;
+    const pct = vid.currentTime / vid.duration * 100;
+    marks.forEach(m => {
+      if (pct >= m - 0.5 && !hit.has(m)) { hit.add(m); goal('video_' + m); }
+    });
+  });
+  vid.addEventListener('ended', () => {
+    if (!hit.has(100)) { hit.add(100); goal('video_100'); }
   });
 })();
 
@@ -1104,6 +1136,11 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   };
 
   function wire(form, done) {
+    // «начал заполнять» — первое касание любого поля, по одному разу на форму
+    let touched = false;
+    form.addEventListener('focusin', () => {
+      if (!touched) { touched = true; goal('form_start'); }
+    });
     const msg  = form.querySelector('.msg');
     const send = form.querySelector('button[type=submit]');
     const lab  = form.querySelector('[id$="-tel-lab"]');
@@ -1180,6 +1217,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
         // свой обработчик отвечает {ok:true}, приёмник — {success:"true"}
         if (!(out && (out.ok === true || String(out.success) === 'true')))
           throw new Error('not ok');
+        goal('form_sent');
         done(channel);
       } catch (err) {
         msg.textContent = 'Не отправилось. Позвоните напрямую: +7 960 279-21-63.';
@@ -1197,6 +1235,7 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
   });
 
   const open = () => {
+    goal('form_open');
     dlg.classList.remove('sent', 'write');
     dlg.showModal();
     document.documentElement.style.overflow = 'hidden';
