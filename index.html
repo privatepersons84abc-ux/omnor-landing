@@ -422,11 +422,6 @@ dialog.modal[open]::backdrop{opacity:1}
 .stamp .duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);
             gap:48px 56px;align-items:start}
 .stamp .say{padding-top:4px}
-.eyebrow{display:inline-block;font:500 12px/1 var(--sans);letter-spacing:.11em;
-         text-transform:uppercase;color:var(--rust);margin:0 0 16px;
-         padding-left:30px;position:relative}
-.eyebrow:before{content:"";position:absolute;left:0;top:50%;width:20px;height:1px;
-                background:var(--rust)}
 .stamp .tiny{font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.45);
              margin:16px 0 0;max-width:42ch}
 .stamp .contacts{grid-column:1 / -1}
@@ -790,7 +785,6 @@ footer a{color:var(--ink-2);border-bottom:1px solid var(--rule);
 <div class="stamp" id="svyaz">
   <div class="w duo">
     <div class="say">
-      <span class="eyebrow">Проверка на ваших данных</span>
       <h2>Покажу на вашей заявке</h2>
       <p>Пришлите одну обезличенную заявку и выгрузку прайса из 1С — верну
          разбор, готовый счёт и покажу весь процесс на ваших данных.</p>
