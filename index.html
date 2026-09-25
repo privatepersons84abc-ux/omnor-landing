@@ -28,7 +28,6 @@ ym(113050474,'init',{ssr:true,webvisor:true,clickmap:true,
   --blue:#1F4E79; --blue-soft:#E7EDF4;
   --rust:#D6541C; --rust-soft:#FBEBE2;
   --rule:#D4D4CE; --rule-2:#E2E2DC;
-  --serif:Georgia,"Times New Roman",Times,serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   --out:cubic-bezier(.23,1,.32,1);
@@ -81,8 +80,8 @@ a{color:inherit;text-decoration:none}
 .head{padding:12px 0 44px}
 .head > .w{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);
            gap:0 56px;align-items:end}
-.head h1{grid-column:1;font:400 clamp(31px,3.7vw,54px)/1.1 var(--serif);
-         letter-spacing:-.024em;margin:0;text-wrap:balance}
+.head h1{grid-column:1;font:600 clamp(30px,3.5vw,50px)/1.08 var(--sans);
+         letter-spacing:-.03em;margin:0;text-wrap:balance}
 .head .std{grid-column:2;font-size:17.5px;line-height:1.62;color:var(--ink-2);
            margin:0 0 6px;max-width:46ch}
 
@@ -197,7 +196,7 @@ a{color:inherit;text-decoration:none}
            padding:12px 20px;border-right:1px solid rgba(255,255,255,.14)}
 .tally div:last-child{border-right:none}
 .tally .go-in + *{border-right:none}
-.tally .v{flex:none;white-space:nowrap;font:400 clamp(25px,2.2vw,32px)/1.05 var(--serif);
+.tally .v{flex:none;white-space:nowrap;font:600 clamp(24px,2.05vw,30px)/1.05 var(--sans);
           letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tally .v.wait{color:rgba(255,255,255,.3)}
 .tally .k em.wait{color:rgba(255,255,255,.3)}
@@ -244,7 +243,7 @@ a{color:inherit;text-decoration:none}
 .part > .w.wide{max-width:1320px}
 .part > .w.wide h2,.part > .w.wide p.t{max-width:62ch}
 .part .no{font:400 14px/1 var(--mono);color:var(--rust);padding-top:11px}
-.part h2{font:400 clamp(25px,2.9vw,34px)/1.2 var(--serif);letter-spacing:-.016em;
+.part h2{font:600 clamp(24px,2.7vw,32px)/1.2 var(--sans);letter-spacing:-.022em;
          margin:0 0 18px;max-width:24ch;text-wrap:balance}
 .part p.t{font-size:17px;line-height:1.66;color:var(--ink-2);margin:0}
 
@@ -329,7 +328,7 @@ a{color:inherit;text-decoration:none}
 .contacts .card{display:flex;flex-direction:column;gap:7px;padding:26px 28px;
                 background:var(--ink);transition:background 180ms ease}
 .contacts .lab{font-size:13px;color:rgba(255,255,255,.5)}
-.contacts .val{font:400 clamp(17px,1.55vw,22px)/1.2 var(--serif);
+.contacts .val{font:500 clamp(17px,1.5vw,21px)/1.25 var(--sans);
                letter-spacing:-.02em;color:#fff;word-break:break-word}
 .contacts .card{padding:22px 24px}
 /* телефон был рыжим как акцент — теперь рыжая карточка заявки,
@@ -358,7 +357,7 @@ dialog.modal{border:0;padding:0;color:var(--ink);background:var(--paper);
 dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 .modal-head{display:flex;align-items:flex-start;gap:14px;
             padding:22px 24px 16px;border-bottom:1px solid var(--rule)}
-.modal-head h3{margin:0;font:400 22px/1.25 var(--serif);letter-spacing:-.018em}
+.modal-head h3{margin:0;font:600 21px/1.25 var(--sans);letter-spacing:-.022em}
 .modal-head .sub{margin:6px 0 0;font-size:14.5px;line-height:1.5;color:var(--ink-3)}
 .modal-x{margin-left:auto;flex:none;width:34px;height:34px;padding:0;cursor:pointer;
          background:transparent;border:1px solid var(--rule);border-radius:8px;
@@ -409,7 +408,7 @@ dialog.modal::backdrop{background:rgba(12,13,15,.6)}
 
 /* ── подтверждение вместо формы ── */
 .zdone{display:none}
-.zdone h4{margin:0 0 8px;font:400 21px/1.3 var(--serif);letter-spacing:-.016em}
+.zdone h4{margin:0 0 8px;font:600 20px/1.3 var(--sans);letter-spacing:-.02em}
 .zdone p{margin:0 0 20px;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
 .modal.sent .zf{display:none}
 .modal.sent .zdone{display:block}
@@ -443,7 +442,7 @@ dialog.modal[open]::backdrop{opacity:1}
 .pane{background:var(--paper);color:var(--ink);padding:26px 28px 28px}
 .pane .zf input{background:#fff}
 .done-in{display:none}
-.done-in h4{margin:0 0 8px;font:400 21px/1.3 var(--serif);letter-spacing:-.016em}
+.done-in h4{margin:0 0 8px;font:600 20px/1.3 var(--sans);letter-spacing:-.02em}
 .done-in p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-2)}
 .pane.sent .zf{display:none}
 .pane.sent .done-in{display:block}
@@ -454,7 +453,7 @@ dialog.modal[open]::backdrop{opacity:1}
 /* ── подвал-штамп ── */
 .stamp{scroll-margin-top:24px;padding:88px 0;background:var(--ink);color:#fff}
 .stamp > .w{max-width:980px}
-.stamp h2{font:400 clamp(27px,3.2vw,38px)/1.2 var(--serif);margin:0 0 16px;
+.stamp h2{font:600 clamp(26px,3vw,36px)/1.18 var(--sans);margin:0 0 16px;
           max-width:18ch;text-wrap:balance}
 .stamp p{font-size:18.5px;line-height:1.62;color:rgba(255,255,255,.66);
          max-width:58ch;margin:0 0 34px}
