@@ -209,7 +209,7 @@ a{color:inherit;text-decoration:none}
 .tally .k em.wait{color:rgba(255,255,255,.3)}
 .tally .k{flex:1;min-width:0;font-size:13px;color:rgba(255,255,255,.62);
           line-height:1.35}
-.tally .k em{display:block;font-style:normal;color:#fff;white-space:nowrap;
+.tally .k em{display:block;font-style:normal;color:#fff;
              font:500 15px/1.3 var(--sans);font-variant-numeric:tabular-nums;
              margin-top:4px}
 /* призыв — четвёртой ячейкой той же полосы: итог по чужой заявке,
@@ -1016,14 +1016,16 @@ const goal = n => { try { if (window.ym) ym(113050474, 'reachGoal', n); } catch 
   // сумма в подписи считается вместе с числами: она такой же итог
   const sums = [...tally.querySelectorAll('.v, .k em')].map(el => {
     const raw = el.textContent.replace(/\u00a0/g, ' ').trim();
-    const pre = raw.startsWith('на ') ? 'на\u00a0' : '';
+    const pre = raw.startsWith('на ') ? 'на ' : '';
     return { el, pre, final: el.textContent, money: raw.includes('₽'),
              num: parseFloat(raw.replace(/[^\d,.-]/g, '').replace(',', '.')) };
   });
-  // ширину чисел фиксируем по итоговой: иначе блок меняет высоту
-  // при пересчёте и кнопка под ним прыгает
+  // ширину фиксируем только числам: иначе блок меняет высоту при пересчёте
+  // и кнопка под ним прыгает. Сумме нельзя — она стоит в подписи и должна
+  // ужиматься вместе с ячейкой, иначе наезжает на соседнюю
   requestAnimationFrame(() => sums.forEach(s => {
-    s.el.style.minWidth = Math.ceil(s.el.getBoundingClientRect().width) + 'px';
+    if (s.el.classList.contains('v'))
+      s.el.style.minWidth = Math.ceil(s.el.getBoundingClientRect().width) + 'px';
   }));
 
   const rh = () => parseFloat(getComputedStyle(document.documentElement)
