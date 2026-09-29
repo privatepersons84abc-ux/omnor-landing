@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /privacy.html
+
+Sitemap: https://omnor.ru/sitemap.xml
+Host: https://omnor.ru
