@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Обработка заявок и спецификаций на много позиций — OMNOR</title>
+<meta name="description" content="Как OMNOR разбирает заявки клиентов в Excel, CSV, PDF и в тексте письма: находит таблицу, приводит размеры и сокращения к одному виду, задаёт вопросы по неполным строкам.">
+<link rel="canonical" href="https://omnor.ru/obrabotka-zayavok-i-specifikaciy.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://omnor.ru/obrabotka-zayavok-i-specifikaciy.html">
+<meta property="og:site_name" content="OMNOR">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Автоматическая обработка заявок и спецификаций на много позиций">
+<meta property="og:description" content="Как OMNOR разбирает заявки клиентов в Excel, CSV, PDF и в тексте письма: находит таблицу, приводит размеры и сокращения к одному виду, задаёт вопросы по неполным строкам.">
+<meta property="og:image" content="https://omnor.ru/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F3F3F1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 84 80'%3E%3Cg transform='rotate(-48 42 40)'%3E%3Ccircle cx='42' cy='40' r='26' fill='none' stroke='%23D6541C' stroke-width='11' stroke-linecap='round' stroke-dasharray='142.46 20.9'/%3E%3C/g%3E%3Ccircle cx='42' cy='40' r='8.5' fill='%23D6541C'/%3E%3C/svg%3E">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "Автоматическая обработка заявок и спецификаций на много позиций", "description": "Как OMNOR разбирает заявки клиентов в Excel, CSV, PDF и в тексте письма: находит таблицу, приводит размеры и сокращения к одному виду, задаёт вопросы по неполным строкам.", "inLanguage": "ru", "mainEntityOfPage": "https://omnor.ru/obrabotka-zayavok-i-specifikaciy.html", "datePublished": "2026-10-01", "dateModified": "2026-10-01", "author": {"@type": "Person", "name": "Пётр Леденев"}, "publisher": {"@type": "Organization", "name": "OMNOR", "url": "https://omnor.ru/"}, "image": "https://omnor.ru/og.jpg"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "OMNOR", "item": "https://omnor.ru/"}, {"@type": "ListItem", "position": 2, "name": "Обработка заявок и спецификаций", "item": "https://omnor.ru/obrabotka-zayavok-i-specifikaciy.html"}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Нужно ли приводить заявку клиента к шаблону?", "acceptedAnswer": {"@type": "Answer", "text": "Нет. Заявка разбирается в том виде, в каком пришла: с сокращениями, разными написаниями размеров и лишними строками в шапке."}}, {"@type": "Question", "name": "Что происходит с опечатками?", "acceptedAnswer": {"@type": "Answer", "text": "Опечатки и сокращения нормализуются до поиска по номенклатуре. Если после этого строка остаётся неоднозначной, клиенту уходит вопрос."}}]}</script>
+<script>
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+m[i].l=1*new Date();for(var j=0;j<e.scripts.length;j++){if(e.scripts[j].src===r){return;}}
+k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+ym(113050474,'init',{ssr:true,webvisor:true,clickmap:true,accurateTrackBounce:true,trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/113050474" style="position:absolute;left:-9999px" alt=""></div></noscript>
+<style>
+:root{--paper:#F3F3F1;--sheet:#FBFBFA;--ink:#17181B;--ink-2:#4A4D53;--ink-3:#7C8087;
+  --rust:#D6541C;--rule:#D4D4CE;--rule-2:#E2E2DC;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--sheet);color:var(--ink);font:17px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+a{color:var(--rust)}
+.w{max-width:820px;margin:0 auto;padding:0 clamp(20px,5vw,32px)}
+.top{background:var(--paper);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:5}
+.top .w{display:flex;align-items:center;gap:14px;padding-top:7px;padding-bottom:7px;max-width:1100px}
+.top a.mark{display:flex;align-items:center;gap:1px;text-decoration:none;color:var(--ink)}
+.wm{font:600 28px/1 var(--sans);letter-spacing:-.032em;margin-left:-5px}
+.sp{flex:1}
+.btn{display:inline-block;background:linear-gradient(180deg,#E06124,var(--rust) 55%,#C44A14);color:#fff;
+  font:600 15px/1 var(--sans);padding:12px 20px;border-radius:8px;text-decoration:none}
+main{padding:46px 0 30px}
+.crumbs{font-size:14px;color:var(--ink-3);margin-bottom:18px}
+.crumbs a{color:var(--ink-3)}
+h1{font:600 clamp(28px,4vw,40px)/1.15 var(--sans);letter-spacing:-.03em;margin:0 0 18px}
+.lead{font-size:20px;line-height:1.55;color:var(--ink-2);margin:0 0 8px}
+h2{font:600 22px/1.3 var(--sans);letter-spacing:-.018em;margin:38px 0 12px}
+p{margin:0 0 14px;color:var(--ink-2)}
+ul,ol{margin:0 0 14px;padding-left:22px;color:var(--ink-2)}
+li{margin:0 0 7px}
+table{width:100%;border-collapse:collapse;margin:6px 0 10px;font-size:16px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--ink);background:var(--paper);font-size:14.5px}
+td{color:var(--ink-2)}
+.note{font-size:14.5px;color:var(--ink-3);margin:0 0 14px}
+details{border-bottom:1px solid var(--rule-2);padding:14px 0}
+details:first-of-type{border-top:1px solid var(--rule-2)}
+summary{cursor:pointer;font-weight:600;font-size:17.5px;color:var(--ink);list-style:none}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";float:right;color:var(--rust);font-weight:400;font-size:22px;line-height:1}
+details[open] summary:after{content:"–"}
+details p{margin:10px 0 0}
+.cta{margin:44px 0 0;background:var(--ink);color:#fff;padding:30px 32px}
+.cta h2{margin:0 0 8px;font-size:24px;color:#fff}
+.cta p{color:rgba(255,255,255,.72);margin:0 0 20px}
+.rel{margin:40px 0 0;padding-top:22px;border-top:1px solid var(--rule)}
+.rel h3{font:600 14px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+.rel ul{list-style:none;padding:0}
+footer{border-top:1px solid var(--rule);margin-top:44px;padding:22px 0 40px;font-size:14.5px;color:var(--ink-3)}
+footer a{color:inherit}
+</style>
+
+<div class="top"><div class="w">
+  <a class="mark" href="/" aria-label="OMNOR"><svg width="48" height="48" viewBox="0 0 84 80" aria-hidden="true"><g transform="rotate(-48 42 40)"><circle cx="42" cy="40" r="26" fill="none" stroke="#D6541C" stroke-width="11" stroke-linecap="round" stroke-dasharray="142.46 20.9"/></g><circle cx="42" cy="40" r="8.5" fill="#D6541C"/></svg><span class="wm">mnor</span></a>
+  <span class="sp"></span>
+  <a class="btn" href="/#svyaz">Проверить на своей заявке</a>
+</div></div>
+
+<main><div class="w">
+  <div class="crumbs"><a href="/">OMNOR</a> / Обработка заявок и спецификаций</div>
+  <h1>Автоматическая обработка заявок и спецификаций на много позиций</h1>
+  <p class="lead">Заявка клиента на десятки позиций приходит в разном виде: таблица Excel, PDF, список в теле письма. OMNOR читает любой из них, находит позиции в вашей номенклатуре и собирает из них счёт.</p>
+<h2>Какие форматы заявок разбирает система</h2>
+<ul><li>Excel и CSV;</li><li>PDF;</li><li>текст письма — список позиций прямо в теле.</li></ul>
+<p>Заранее приводить заявку к шаблону не нужно: она разбирается в том виде, в каком пришла.</p>
+<h2>Как система находит таблицу в файле</h2>
+<p>Часто сверху файла стоит шапка с адресом объекта, а снизу итоги. OMNOR определяет, где таблица позиций, и разбирает только её.</p>
+<h2>Как строки приводятся к одному виду</h2>
+<p>Снабженцы пишут одно и то же по-разному. До поиска в номенклатуре система нормализует запись:</p>
+<table><thead><tr><th>Как написал снабженец</th><th>Как понимает OMNOR</th></tr></thead><tbody><tr><td>ДУ25, dn 25, д25</td><td>один диаметр: DN25</td></tr><tr><td>М10х80 (русская «х»), М10*80</td><td>М10x80</td></tr><tr><td>4,2 (запятая)</td><td>4.2</td></tr><tr><td>оц., оцинк.</td><td>оцинкованный</td></tr><tr><td>ввгнг(а)-ls 5*6</td><td>Кабель ВВГнг(А)-LS 5x6 ГОСТ</td></tr></tbody></table>
+<h2>Что происходит с неполными строками</h2>
+<p>Строка «Болт М10 оц.» не содержит длины. В номенклатуре есть М10x40, М10x60, М10x80, М10x100 и М10x120. Система не выбирает одну из них, а формулирует клиенту вопрос с вариантами. Если товара в номенклатуре нет вообще, строка уходит в отдельный список позиций вне прайса.</p>
+<h2>Частые вопросы</h2>
+<details><summary>Нужно ли приводить заявку клиента к шаблону?</summary><p>Нет. Заявка разбирается в том виде, в каком пришла: с сокращениями, разными написаниями размеров и лишними строками в шапке.</p></details>
+<details><summary>Что происходит с опечатками?</summary><p>Опечатки и сокращения нормализуются до поиска по номенклатуре. Если после этого строка остаётся неоднозначной, клиенту уходит вопрос.</p></details>
+  <div class="cta">
+    <h2>Покажу на вашей заявке</h2>
+    <p>Пришлите одну обезличенную заявку и выгрузку прайса из 1С. Верну разбор, готовый счёт и расчёт прибыли на ваших данных. Бесплатно.</p>
+    <a class="btn" href="/#svyaz">Проверить на своей заявке</a>
+  </div>
+  <div class="rel"><h3>Ещё по теме</h3><ul><li><a href="/avtomatizaciya-schetov-i-kp.html">Автоматизация счетов и КП</a></li><li><a href="/zayavka-v-schet-v-1s.html">Заявка в счёт в 1С</a></li><li><a href="/raschet-pribyli-po-zayavke.html">Расчёт прибыли по заявке</a></li><li><a href="/sopostavlenie-nomenklatury.html">Сопоставление номенклатуры</a></li><li><a href="/integraciya-1s-i-crm.html">Интеграция 1С и CRM</a></li></ul></div>
+</div></main>
+
+<footer><div class="w">
+  OMNOR · <a href="mailto:ledenev@omnor.ru">ledenev@omnor.ru</a> · <a href="tel:+79602792163">+7 960 279-21-63</a>
+  · <a href="/">На главную</a> · <a href="/privacy.html">Политика конфиденциальности</a>
+</div></footer>
+</html>
